@@ -45,15 +45,7 @@ public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPac
 
     public fun postInitialize(){
         if(postInitialized){
-            this.packets.sortWith(object : Comparator<KClass<out AbstractPacket>>{
-                override fun compare(o1: KClass<out AbstractPacket>, o2: KClass<out AbstractPacket>): Int {
-                    var result = String.CASE_INSENSITIVE_ORDER.compare(o1.qualifiedName, o2.qualifiedName)
-                    if(result == 0){
-                        result = o1.qualifiedName?.compareTo(o2?.qualifiedName ?: "") ?: 0 //don't know how to implement it correctly
-                    }
-                    return result
-                }
-            })
+            this.packets.sortBy { it.qualifiedName }
             this.postInitialized = true
         }
     }
