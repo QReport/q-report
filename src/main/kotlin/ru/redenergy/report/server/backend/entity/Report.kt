@@ -34,21 +34,29 @@ class Report {
         public get
         private set
 
+    @DatabaseField
+    var timestamp: Long
+        public get
+        private set
+
     //for ormlite
     private constructor(){
         this.uid = UUID.randomUUID()
         this.sender = "unknown"
         this.text = "empty"
+        this.timestamp = -1
     }
 
     /**
-     * @param uid - if not specified will be generated randomly
      * @param sender - sender of ticket
      * @param text - ticket text
+     * @param uid - if not specified will be generated randomly
+     * @param time - timestamp of ticket sending
      */
-    constructor(uid: UUID = UUID.randomUUID(), sender: String, text: String){
+    constructor(sender: String, text: String, uid: UUID = UUID.randomUUID(), time: Long = System.currentTimeMillis()){
         this.uid = uid
         this.sender = sender
         this.text = text
+        this.timestamp = time
     }
 }
