@@ -21,7 +21,7 @@ class ReportManagerTest {
 
     @Test
     fun testAddReport(){
-        reportManager.addReport(Report(sender = "MagicPlayer", text = "Text"))
+        reportManager.addReport(Report("MagicPlayer", "Text"))
     }
 
     @Test
