@@ -19,6 +19,12 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'forge'
 
+repositories{
+    maven {
+        url 'http://jitpack.io'
+    }
+}
+
 version = "0.0.1"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
@@ -38,6 +44,8 @@ configurations {
 dependencies {
     shade 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
     shade 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
+
+    compile 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT'
     compile 'com.j256.ormlite:ormlite-core:4.48'
     compile 'com.j256.ormlite:ormlite-jdbc:4.48'
     compile 'org.xerial:sqlite-jdbc:3.7.2'
