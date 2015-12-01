@@ -5,6 +5,8 @@ import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.common.config.Configuration
+import ru.redenergy.report.common.network.NetworkHandler
+import ru.redenergy.report.common.network.packet.ReportPacket
 import ru.redenergy.report.server.backend.ReportManager
 import java.io.File
 
@@ -21,11 +23,22 @@ object QReportServer {
         var config = Configuration(event.suggestedConfigurationFile)
         this.jdbcPath = config.getString("jdbc path", "Database", jdbcPath, "JDBC database path can be mysql or sqlite")
         config.save()
+        NetworkHandler.instance.initialise()
+    }
+
+    @Mod.EventHandler
+    public fun init(event: FMLPreInitializationEvent){
+        registerPackets()
+    }
+
+    private fun registerPackets(){
+        NetworkHandler.instance.registerPacket(ReportPacket::class)
     }
 
     @Mod.EventHandler
     public fun postInit(event: FMLPostInitializationEvent){
         println("Serverside QReport Loaded")
+        NetworkHandler.instance.postInitialize()
         reportManager = ReportManager(JdbcConnectionSource("jdbc:sqlite:${File("").getAbsolutePath()}/reports.sqlite"))
         reportManager?.initialize()
     }
