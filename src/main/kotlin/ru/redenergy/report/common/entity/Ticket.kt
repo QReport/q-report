@@ -1,14 +1,15 @@
-package ru.redenergy.report.server.backend.entity
+package ru.redenergy.report.common.entity
 
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.table.DatabaseTable
+import ru.redenergy.report.common.TicketReason
 import java.util.*
 
 /**
  * Represents report ticket in database
  */
-@DatabaseTable(tableName = "reports")
-class Report {
+@DatabaseTable(tableName = "tickets")
+class Ticket {
 
     /**
      * Primary key and identifier of ticket
@@ -35,6 +36,11 @@ class Report {
         private set
 
     @DatabaseField
+    var reason: TicketReason
+        public get
+        private set
+
+    @DatabaseField
     var timestamp: Long
         public get
         private set
@@ -45,6 +51,7 @@ class Report {
         this.sender = "unknown"
         this.text = "empty"
         this.timestamp = -1
+        this.reason = TicketReason.OTHER
     }
 
     /**
@@ -52,11 +59,13 @@ class Report {
      * @param text - ticket text
      * @param uid - if not specified will be generated randomly
      * @param time - timestamp of ticket sending
+     * @param reason - reason of a ticket
      */
-    constructor(sender: String, text: String, uid: UUID = UUID.randomUUID(), time: Long = System.currentTimeMillis()){
+    constructor(sender: String, text: String, uid: UUID = UUID.randomUUID(), time: Long = System.currentTimeMillis(), reason: TicketReason = TicketReason.OTHER){
         this.uid = uid
         this.sender = sender
         this.text = text
         this.timestamp = time
+        this.reason = reason
     }
 }

@@ -1,4 +1,4 @@
-package ru.redenergy.report.common.network
+package ru.redenergy.report.common
 
 import net.minecraft.client.resources.I18n
 
