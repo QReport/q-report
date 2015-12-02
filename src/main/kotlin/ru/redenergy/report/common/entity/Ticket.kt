@@ -6,15 +6,13 @@ import ru.redenergy.report.common.TicketReason
 import java.util.*
 
 /**
- * Represents report ticket in database
+ * Represents report ticket
  */
-@DatabaseTable(tableName = "tickets")
 class Ticket {
 
     /**
      * Primary key and identifier of ticket
      */
-    @DatabaseField(id = true)
     var uid: UUID
         public get
         private set
@@ -22,7 +20,6 @@ class Ticket {
     /**
      * Ticket sender name
      */
-    @DatabaseField
     var sender: String
         public get
         private set
@@ -30,17 +27,14 @@ class Ticket {
     /**
      * Ticket text
      */
-    @DatabaseField
     var text: String
         public get
         private set
 
-    @DatabaseField
     var reason: TicketReason
         public get
         private set
 
-    @DatabaseField
     var timestamp: Long
         public get
         private set
