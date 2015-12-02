@@ -9,7 +9,7 @@ import org.lwjgl.input.Keyboard
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.ReportShow
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.ReportPacket
+import ru.redenergy.report.common.network.packet.TicketPacket
 
 @Mod(modid = "qreport-client", name = "QReport - Q&A communication tool for players and admins", modLanguageAdapter = "ru.redenergy.report.kotlin.KotlinAdapter")
 object QReportClient {
@@ -27,7 +27,7 @@ object QReportClient {
     }
 
     private fun registerPackets(){
-        NetworkHandler.instance.registerPacket(ReportPacket::class)
+        NetworkHandler.instance.registerPacket(TicketPacket::class)
     }
 
     private fun registerKeys(){

@@ -31,7 +31,7 @@ class TicketPacket(var text: String, var reason: TicketReason): AbstractPacket {
     }
 
     override fun handleServer(player: EntityPlayer) {
-        QReportServer.reportManager.handleNewTicket(text, player as EntityPlayerMP)
+        QReportServer.ticketManager.handleNewTicket(text, reason, player as EntityPlayerMP)
     }
 
 }

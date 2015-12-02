@@ -4,7 +4,7 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource
 import com.j256.ormlite.table.TableUtils
 import org.junit.Before
 import org.junit.Test
-import ru.redenergy.report.server.backend.entity.Report
+import ru.redenergy.report.common.entity.Ticket
 import java.io.File
 import org.junit.Assert.*
 
@@ -21,12 +21,12 @@ class ReportManagerTest {
 
     @Test
     fun testAddReport(){
-        reportManager.addReport(Report("MagicPlayer", "Text"))
+        reportManager.addTicket(Ticket("MagicPlayer", "Text"))
     }
 
     @Test
     fun testGetReports(){
-        reportManager.getReports().forEach { println(it) }
+        reportManager.getTickets().forEach { println(it) }
     }
 
 }
