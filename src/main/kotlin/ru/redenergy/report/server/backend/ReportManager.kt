@@ -9,6 +9,8 @@ import com.j256.ormlite.table.TableUtils
 import net.minecraft.entity.player.EntityPlayerMP
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.entity.Ticket
+import ru.redenergy.report.common.network.NetworkHandler
+import ru.redenergy.report.common.network.packet.SyncTickets
 import java.util.*
 
 class ReportManager(val connectionSource: ConnectionSource) {
@@ -29,6 +31,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
     public fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) = newTicket(text, reason, player.commandSenderName)
 
     public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(Ticket(sender = sender, text = text, reason = reason))
+
+    public fun handleSyncRequest(player: EntityPlayerMP) = NetworkHandler.instance.sendTo(SyncTickets(getTickets()), player)
 
     private fun configureTicketEntity() : DatabaseTableConfig<Ticket> {
         return DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
