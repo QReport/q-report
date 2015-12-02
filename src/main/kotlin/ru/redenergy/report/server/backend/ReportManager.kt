@@ -2,27 +2,41 @@ package ru.redenergy.report.server.backend
 
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
+import com.j256.ormlite.field.DatabaseFieldConfig
 import com.j256.ormlite.support.ConnectionSource
+import com.j256.ormlite.table.DatabaseTableConfig
 import com.j256.ormlite.table.TableUtils
 import net.minecraft.entity.player.EntityPlayerMP
-import ru.redenergy.report.server.backend.entity.Report
+import ru.redenergy.report.common.TicketReason
+import ru.redenergy.report.common.entity.Ticket
 import java.util.*
 
 class ReportManager(val connectionSource: ConnectionSource) {
 
-    var reportDao = DaoManager.createDao<Dao<Report, UUID>, Report>(connectionSource, Report::class.java)
+    val ticketConfig = configureTicketEntity()
+    var ticketDao = DaoManager.createDao<Dao<Ticket, UUID>, Ticket>(connectionSource, ticketConfig)
 
     public fun initialize(){
-        TableUtils.createTableIfNotExists(connectionSource, Report::class.java)
+        TableUtils.createTableIfNotExists(connectionSource, Ticket::class.java)
     }
 
-    public fun addReport(report: Report) = reportDao.create(report)
+    public fun addTicket(ticket: Ticket) = ticketDao.create(ticket)
 
-    public fun getReports(): MutableList<Report> = reportDao.queryForAll()
+    public fun getTickets(): MutableList<Ticket> = ticketDao.queryForAll()
 
-    public fun deleteReport(report: Report) = reportDao.delete(report)
+    public fun deleteTicket(ticket: Ticket) = ticketDao.delete(ticket)
 
-    public fun handleNewTicket(text: String, player: EntityPlayerMP) = newTicket(text, player.commandSenderName)
+    public fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) = newTicket(text, reason, player.commandSenderName)
 
-    public fun newTicket(text: String, sender: String) = addReport(Report(sender = sender, text = text))
+    public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(Ticket(sender = sender, text = text, reason = reason))
+
+    private fun configureTicketEntity() : DatabaseTableConfig<Ticket> {
+        return DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
+            add(DatabaseFieldConfig("uid").apply { isId = true })
+            add(DatabaseFieldConfig("sender"))
+            add(DatabaseFieldConfig("text"))
+            add(DatabaseFieldConfig("reason"))
+            add(DatabaseFieldConfig("timestamp"))
+        }).apply { tableName = "tickets" }
+    }
 }
