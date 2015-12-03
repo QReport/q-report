@@ -11,6 +11,7 @@ import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.ReportShow
 import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.network.NetworkHandler
+import ru.redenergy.report.common.network.packet.AddMessagePacket
 import ru.redenergy.report.common.network.packet.RequestSyncPacket
 import ru.redenergy.report.common.network.packet.SyncTickets
 import ru.redenergy.report.common.network.packet.TicketPacket
@@ -37,6 +38,7 @@ object QReportClient {
             registerPacket(TicketPacket::class)
             registerPacket(RequestSyncPacket::class)
             registerPacket(SyncTickets::class)
+            registerPacket(AddMessagePacket::class)
         }
     }
 
