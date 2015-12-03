@@ -1,7 +1,5 @@
 package ru.redenergy.report.common.entity
 
-import com.j256.ormlite.field.DatabaseField
-import com.j256.ormlite.table.DatabaseTable
 import ru.redenergy.report.common.TicketReason
 import java.util.*
 
@@ -18,48 +16,47 @@ class Ticket {
         private set
 
     /**
-     * Ticket sender name
+     * Original ticket initiator
      */
     var sender: String
         public get
         private set
 
     /**
-     * Ticket text
+     * Original reason of ticket
      */
-    var text: String
-        public get
-        private set
-
     var reason: TicketReason
         public get
         private set
 
-    var timestamp: Long
+    /**
+     * Message history <br>
+     * Note: in database this field will be persisted as json string, check out [ru.redenergy.report.server.orm.JsonPersister]
+     */
+    var messages: MutableList<TicketMessage>
         public get
         private set
 
-    //for ormlite
+    /**
+     * Empty constructor requested by ORMLite
+     */
     private constructor(){
         this.uid = UUID.randomUUID()
         this.sender = "unknown"
-        this.text = "empty"
-        this.timestamp = -1
         this.reason = TicketReason.OTHER
+        this.messages = arrayListOf()
     }
 
     /**
-     * @param sender - sender of ticket
-     * @param text - ticket text
-     * @param uid - if not specified will be generated randomly
-     * @param time - timestamp of ticket sending
+     * @param uid - identifier of a ticket, if not provided will be generated randomly
+     * @param sender - original sender of a ticket
      * @param reason - reason of a ticket
+     * @param messages - messages in ticket
      */
-    constructor(sender: String, text: String, uid: UUID = UUID.randomUUID(), time: Long = System.currentTimeMillis(), reason: TicketReason = TicketReason.OTHER){
+    constructor(uid: UUID = UUID.randomUUID(), sender: String, reason: TicketReason, messages: MutableList<TicketMessage>){
         this.uid = uid
         this.sender = sender
-        this.text = text
-        this.timestamp = time
         this.reason = reason
+        this.messages = messages
     }
 }
