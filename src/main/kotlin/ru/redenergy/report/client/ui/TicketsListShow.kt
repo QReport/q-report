@@ -1,6 +1,7 @@
 package ru.redenergy.report.client.ui
 
 import com.rabbit.gui.background.DefaultBackground
+import com.rabbit.gui.component.control.Button
 import com.rabbit.gui.component.control.MultiTextbox
 import com.rabbit.gui.component.display.TextLabel
 import com.rabbit.gui.component.list.DisplayList
@@ -12,13 +13,20 @@ import net.minecraft.util.EnumChatFormatting
 import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.network.NetworkHandler
+import ru.redenergy.report.common.network.packet.AddMessagePacket
 import ru.redenergy.report.common.network.packet.RequestSyncPacket
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TicketsListShow : Show() {
+
 
     init{
         background = DefaultBackground()
     }
+
+    val timeFormatter = SimpleDateFormat("dd.M HH:mm:ss")
+
     var selectedTicker: Ticket? = null
 
     override fun onInit(){
@@ -38,11 +46,12 @@ class TicketsListShow : Show() {
                         .setIsEnabled(false)
                         .setId("information_field"))
         registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 - 15, this.width / 3, "Add message:"))
-        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2, this.width / 3, this.height / 10))
-    }
+        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2, this.width / 3, this.height / 10)
+                        .setId("new_message_field"))
+        registerComponent(Button(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 + this.height / 10 + 5, this.width / 3, 20, "Send")
+                        .setClickListener({ addMessage() }));
 
-    override fun onDraw(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.onDraw(mouseX, mouseY, partialTicks)
+        updateInformation()
     }
 
     private fun select(selected: Ticket){
@@ -55,18 +64,27 @@ class TicketsListShow : Show() {
         this.selectedTicker?.apply {
             var builder = StringBuilder().apply {
                 messages.forEach {
-                    append(it.sender)
+                    append("${EnumChatFormatting.BOLD}${it.sender}")
                     append("\n")
-                    append(it.timestamp)
+                    append(timeFormatter.format(Date(it.timestamp)))
                     append("\n")
                     append(it.text)
-                    append("\n")
+                    append("\n\n")
                 }
+
             }
             informationLabel.setText(builder.toString())
         }
 
     }
+
+    private fun addMessage(){
+        var message = (findComponentById<MultiTextbox>("new_message_field") as MultiTextbox).text
+        if(this.selectedTicker == null || message.trim().equals("")) return
+        NetworkHandler.instance.sendToServer(AddMessagePacket(this.selectedTicker?.uid as UUID, message))
+        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+    }
+
 
    class TicketEntry(val ticket: Ticket, val action: () -> Unit) : ListEntry{
 
