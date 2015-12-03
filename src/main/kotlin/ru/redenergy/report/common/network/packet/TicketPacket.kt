@@ -14,8 +14,6 @@ import ru.redenergy.report.common.network.AbstractPacket
  */
 class TicketPacket(var text: String, var reason: TicketReason): AbstractPacket {
 
-    constructor() : this("", TicketReason.OTHER) {}
-
     override fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
         ByteBufUtils.writeUTF8String(buf, text)
         ByteBufUtils.writeUTF8String(buf, reason.name)

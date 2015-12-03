@@ -13,8 +13,6 @@ import ru.redenergy.report.common.network.AbstractPacket
 
 class SyncTickets(var tickets: MutableList<Ticket>) : AbstractPacket{
 
-    constructor() : this(arrayListOf()) {}
-
     override fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
         ByteBufUtils.writeUTF8String(buf, Gson().toJson(tickets))
     }
