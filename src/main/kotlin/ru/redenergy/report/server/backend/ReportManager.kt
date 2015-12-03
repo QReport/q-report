@@ -43,6 +43,13 @@ class ReportManager(val connectionSource: ConnectionSource) {
 
     public fun handleSyncRequest(player: EntityPlayerMP) = NetworkHandler.instance.sendTo(SyncTickets(getTickets()), player)
 
+    public fun handleAddMessage(ticketUid: UUID, message: String, player: EntityPlayerMP) {
+        var ticket = ticketDao.queryForId(ticketUid)?: return
+        var ticketMessage = TicketMessage(player.commandSenderName, message)
+        ticket.messages.add(ticketMessage)
+        ticketDao.update(ticket)
+    }
+
     private fun configureTicketEntity(): DatabaseTableConfig<Ticket> {
         return DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
             add(DatabaseFieldConfig("uid").apply { isId = true })
