@@ -32,11 +32,12 @@ class TicketsListShow : Show() {
         registerComponent(ScrollableDisplayList(this.width / 5, this.height / 5, this.width / 6 , this.height / 5 * 3, 35,
                 QReportClient.syncedTickets.map { TicketEntry(it, {select(it)}) } ))
         registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 - 15, this.width / 6, "Information about ticket:"))
-        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 8, "Select ticket")
+        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 23, "Select ticket")
                         .setBackgroundVisibility(false)
                         .setMaxLenght(Int.MAX_VALUE)
                         .setIsEnabled(false)
                         .setId("information_field"))
+        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 - 15, this.width / 3, "Add message:"))
         registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2, this.width / 3, this.height / 10))
     }
 
@@ -53,12 +54,14 @@ class TicketsListShow : Show() {
         var informationLabel = findComponentById<MultiTextbox>("information_field") as MultiTextbox
         this.selectedTicker?.apply {
             var builder = StringBuilder().apply {
-                append("${EnumChatFormatting.UNDERLINE}$sender${EnumChatFormatting.RESET}")
-                append("\n")
-                append(timestamp)
-                append("\n")
-                append(text)
-                append("\n")
+                messages.forEach {
+                    append(it.sender)
+                    append("\n")
+                    append(it.timestamp)
+                    append("\n")
+                    append(it.text)
+                    append("\n")
+                }
             }
             informationLabel.setText(builder.toString())
         }
@@ -74,7 +77,6 @@ class TicketsListShow : Show() {
 
        override fun onDraw(list: DisplayList?, posX: Int, posY: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) {
            TextRenderer.renderString(posX + 5, posY + 5, ticket.sender)
-           TextRenderer.renderString(posX + 5, posY + 15, TextRenderer.getFontRenderer().trimStringToWidth(ticket.text, width - 20) + "...")
            TextRenderer.renderString(posX + 5, posY + 25, TextRenderer.getFontRenderer().trimStringToWidth(ticket.reason.getTranslation(), width -5 ))
        }
    }
