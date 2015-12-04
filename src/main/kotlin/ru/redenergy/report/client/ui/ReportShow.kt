@@ -5,6 +5,7 @@ import com.rabbit.gui.component.control.Button
 import com.rabbit.gui.component.control.DropDown
 import com.rabbit.gui.component.control.MultiTextbox
 import com.rabbit.gui.component.control.TextBox
+import com.rabbit.gui.component.display.TextLabel
 import com.rabbit.gui.show.Show
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.network.NetworkHandler
@@ -19,15 +20,17 @@ class ReportShow : Show() {
 
     public override fun setup(){
         super.setup()
-        registerComponent(MultiTextbox(this.width / 3, this.height / 3, this.width / 3, this.height / 3)
+        registerComponent(TextLabel(this.width / 3, this.height / 4 - 15, this.width / 3, "Describe your problem:"))
+        registerComponent(MultiTextbox(this.width / 3, this.height / 4, this.width / 3, this.height / 3)
                 .setId("text_box"))
-        registerComponent(DropDown<TicketReason>(this.width / 3, this.height / 3 * 2 + 5, this.width / 3, "Ticket reason:")
+        registerComponent(TextLabel(this.width / 3, this.height / 4 + this.height / 3 + 20, this.width /3, "Related category:"))
+        registerComponent(DropDown<TicketReason>(this.width / 3 + 2, this.height / 4 + this.height / 3 + 35, this.width / 3 - 4)
                 .addAndSetDefault(TicketReason.OTHER)
                 .addAll(*TicketReason.values.filter { !it.equals(TicketReason.OTHER) }.toTypedArray())
                 .setId("reason_dropdown"))
-        registerComponent(Button(this.width / 3, this.height / 3 * 2 + 22, this.width / 3, 20, "Send")
+        registerComponent(Button(this.width / 3, this.height / 3 + this.height / 4 + 60, this.width / 3 / 2 - 2, 20, "Send")
                 .setClickListener { send() })
-        registerComponent(Button(this.width / 3, this.height / 3 * 2 + 44, this.width / 3, 20, "Close")
+        registerComponent(Button(this.width / 3 + this.width / 3 / 2 + 2, this.height / 3 + this.height / 4 + 60, this.width / 3 / 2 - 2, 20, "Close")
                 .setClickListener { this.getStage().displayPrevious() })
     }
 
