@@ -10,6 +10,7 @@ import com.j256.ormlite.table.TableUtils
 import net.minecraft.entity.player.EntityPlayerMP
 import org.apache.commons.lang3.reflect.FieldUtils
 import ru.redenergy.report.common.TicketReason
+import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.entity.TicketMessage
 import ru.redenergy.report.common.network.NetworkHandler
@@ -39,7 +40,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
 
     public fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) = newTicket(text, reason, player.commandSenderName)
 
-    public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(Ticket(sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
+    public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(
+            Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
 
     public fun handleSyncRequest(player: EntityPlayerMP) = NetworkHandler.instance.sendTo(SyncTickets(getTickets()), player)
 
@@ -53,6 +55,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
     private fun configureTicketEntity(): DatabaseTableConfig<Ticket> {
         return DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
             add(DatabaseFieldConfig("uid").apply { isId = true })
+            add(DatabaseFieldConfig("status"))
             add(DatabaseFieldConfig("sender"))
             add(DatabaseFieldConfig("reason"))
             add(DatabaseFieldConfig("messages").apply { persisterClass = JsonPersister::class.java })

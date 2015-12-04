@@ -1,6 +1,7 @@
 package ru.redenergy.report.common.entity
 
 import ru.redenergy.report.common.TicketReason
+import ru.redenergy.report.common.TicketStatus
 import java.util.*
 
 /**
@@ -29,6 +30,10 @@ class Ticket {
         public get
         private set
 
+    var status: TicketStatus
+        public get
+        private set
+
     /**
      * Message history <br>
      * Note: in database this field will be persisted as json string, check out [ru.redenergy.report.server.orm.JsonPersister]
@@ -43,18 +48,21 @@ class Ticket {
     private constructor(){
         this.uid = UUID.randomUUID()
         this.sender = "unknown"
+        this.status = TicketStatus.OPEN
         this.reason = TicketReason.OTHER
         this.messages = arrayListOf()
     }
 
     /**
      * @param uid - identifier of a ticket, if not provided will be generated randomly
+     * @param status - current status of ticket
      * @param sender - original sender of a ticket
      * @param reason - reason of a ticket
      * @param messages - messages in ticket
      */
-    constructor(uid: UUID = UUID.randomUUID(), sender: String, reason: TicketReason, messages: MutableList<TicketMessage>){
+    constructor(uid: UUID = UUID.randomUUID(), status: TicketStatus, sender: String, reason: TicketReason, messages: MutableList<TicketMessage>){
         this.uid = uid
+        this.status = status
         this.sender = sender
         this.reason = reason
         this.messages = messages
