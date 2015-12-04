@@ -1,4 +1,10 @@
+#Reasons
 ticket.reason.bug=Bug
 ticket.reason.grief=Griefing
 ticket.reason.suggest=Suggestion
 ticket.reason.other=Other
+
+#Statuses
+ticket.status.open=Open
+ticket.status.inprogress=In progress
+ticket.status.closed=Closed
