@@ -1,6 +1,7 @@
 package ru.redenergy.report.common
 
 import net.minecraft.client.resources.I18n
+import net.minecraft.util.StatCollector
 
 /**
  * Reasons of tickets
@@ -14,7 +15,7 @@ enum class TicketReason(val translateKey: String) {
     /**
      * Bad player behavior
      */
-    GREFIENG("ticket.reason.grief"),
+    GRIEFING("ticket.reason.grief"),
     /**
      * Suggestion of improvement
      */
@@ -26,7 +27,7 @@ enum class TicketReason(val translateKey: String) {
 
     public fun getKey(): String = translateKey
 
-    public fun getTranslation(): String = I18n.format(translateKey)
+    public fun getTranslation(): String = StatCollector.translateToLocal(translateKey)
 
     override fun toString() = getTranslation()
 }
