@@ -37,7 +37,7 @@ class TicketsListShow : Show() {
     override fun setup(){
         super.setup()
         registerComponent(TextLabel(this.width / 5, this.height / 5 - 15, this.width / 6, "Tickets:"))
-        registerComponent(ScrollableDisplayList(this.width / 5, this.height / 5, this.width / 6 , this.height / 5 * 3, 35,
+        registerComponent(ScrollableDisplayList(this.width / 5, this.height / 5, this.width / 6 , this.height / 5 * 3, 45,
                 QReportClient.syncedTickets.map { TicketEntry(it, {select(it)}) } ))
         registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 - 15, this.width / 6, "Information about ticket:"))
         registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 23, "Select ticket")
@@ -96,7 +96,8 @@ class TicketsListShow : Show() {
        override fun onDraw(list: DisplayList?, posX: Int, posY: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) {
            TextRenderer.renderString(posX + 5, posY + 5, ticket.sender)
            TextRenderer.renderString(posX + 5, posY + 15, ticket.shortUid())
-           TextRenderer.renderString(posX + 5, posY + 25, TextRenderer.getFontRenderer().trimStringToWidth(ticket.reason.getTranslation(), width -5 ))
+           TextRenderer.renderString(posX + 5, posY + 25, "Reason: " + ticket.reason.getTranslation())
+           TextRenderer.renderString(posX + 5, posY + 35, "${EnumChatFormatting.WHITE}Status: ${EnumChatFormatting.RESET}" + ticket.status.getTranslation(), ticket.status.color)
        }
    }
 
