@@ -95,6 +95,7 @@ class TicketsListShow : Show() {
 
        override fun onDraw(list: DisplayList?, posX: Int, posY: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) {
            TextRenderer.renderString(posX + 5, posY + 5, ticket.sender)
+           TextRenderer.renderString(posX + 5, posY + 15, ticket.shortUid())
            TextRenderer.renderString(posX + 5, posY + 25, TextRenderer.getFontRenderer().trimStringToWidth(ticket.reason.getTranslation(), width -5 ))
        }
    }
