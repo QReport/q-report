@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
 import net.minecraft.util.EnumChatFormatting
-import org.apache.commons.lang3.reflect.FieldUtils
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.entity.Ticket
@@ -21,8 +20,6 @@ import ru.redenergy.report.common.network.packet.SyncTickets
 import ru.redenergy.report.common.network.packet.UpdateAdminAccess
 import ru.redenergy.report.server.orm.JsonPersister
 import java.util.*
-import kotlin.reflect.declaredFunctions
-import kotlin.test.assertNull
 
 class ReportManager(val connectionSource: ConnectionSource) {
 
@@ -64,6 +61,16 @@ class ReportManager(val connectionSource: ConnectionSource) {
         if(canAccessTicket(ticket, player)){
             var ticketMessage = TicketMessage(player.commandSenderName, message)
             ticket.messages.add(ticketMessage)
+            ticketDao.update(ticket)
+        } else {
+            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid()}."))
+        }
+    }
+
+    public fun handleUpdateTicketStatus(ticketUid: UUID, status: TicketStatus, player: EntityPlayerMP){
+        var ticket = ticketDao.queryForId(ticketUid) ?: return
+        if(canAccessTicket(ticket, player)) {
+            ticket.status = status
             ticketDao.update(ticket)
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid()}."))
