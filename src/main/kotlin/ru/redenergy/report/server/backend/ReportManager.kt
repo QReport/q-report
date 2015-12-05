@@ -8,6 +8,9 @@ import com.j256.ormlite.support.ConnectionSource
 import com.j256.ormlite.table.DatabaseTableConfig
 import com.j256.ormlite.table.TableUtils
 import net.minecraft.entity.player.EntityPlayerMP
+import net.minecraft.server.MinecraftServer
+import net.minecraft.util.ChatComponentText
+import net.minecraft.util.EnumChatFormatting
 import org.apache.commons.lang3.reflect.FieldUtils
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
@@ -15,9 +18,11 @@ import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.entity.TicketMessage
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.SyncTickets
+import ru.redenergy.report.common.network.packet.UpdateAdminAccess
 import ru.redenergy.report.server.orm.JsonPersister
 import java.util.*
 import kotlin.reflect.declaredFunctions
+import kotlin.test.assertNull
 
 class ReportManager(val connectionSource: ConnectionSource) {
 
@@ -43,13 +48,20 @@ class ReportManager(val connectionSource: ConnectionSource) {
     public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(
             Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
 
-    public fun handleSyncRequest(player: EntityPlayerMP) = NetworkHandler.instance.sendTo(SyncTickets(getTickets()), player)
+    public fun handleSyncRequest(player: EntityPlayerMP) {
+        NetworkHandler.instance.sendTo(UpdateAdminAccess(canAccessTicketManagement(player)), player)
+        NetworkHandler.instance.sendTo(SyncTickets(getTickets()), player)
+    }
 
     public fun handleAddMessage(ticketUid: UUID, message: String, player: EntityPlayerMP) {
         var ticket = ticketDao.queryForId(ticketUid)?: return
-        var ticketMessage = TicketMessage(player.commandSenderName, message)
-        ticket.messages.add(ticketMessage)
-        ticketDao.update(ticket)
+        if(canAccessTicket(ticket, player)){
+            var ticketMessage = TicketMessage(player.commandSenderName, message)
+            ticket.messages.add(ticketMessage)
+            ticketDao.update(ticket)
+        } else {
+            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid()}."))
+        }
     }
 
     private fun configureTicketEntity(): DatabaseTableConfig<Ticket> {
@@ -61,4 +73,30 @@ class ReportManager(val connectionSource: ConnectionSource) {
             add(DatabaseFieldConfig("messages").apply { persisterClass = JsonPersister::class.java })
         }).apply { tableName = "tickets" }
     }
+
+    /**
+     * Checks if player have permission to answer/close this particular ticket
+     */
+    private fun canAccessTicket(ticket: Ticket, player: EntityPlayerMP): Boolean{
+        return ticket.sender.equals(player.commandSenderName, true) || canAccessTicketManagement(player)
+    }
+
+    /**
+     * Checks if player have permission to answer/close other players tickets
+     */
+    private fun canAccessTicketManagement(player: EntityPlayerMP): Boolean {
+        if(MinecraftServer.getServer().isDedicatedServer){
+            return isOp(player)
+        } else {
+            return player.capabilities.isCreativeMode //just for testing
+        }
+
+    }
+
+    /**
+     * Returns true if given player has operator permission
+     */
+    private fun isOp(player: EntityPlayerMP): Boolean = MinecraftServer.getServer().configurationManager
+            .func_152603_m().func_152700_a(player.commandSenderName) != null
+
 }
