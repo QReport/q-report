@@ -26,7 +26,7 @@ class ManageTicketsShow: TicketsListShow(){
     }
 
     fun changeStatus(){
-        val ticket = this.selectedTicker ?: return
+        val ticket = this.selectedTicket ?: return
         var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown") as DropDown<TicketStatus>
         var updatedStatus = dropdown.selectedElement.value
         NetworkHandler.instance.sendToServer(ChangeTicketStatus(ticket.uid, updatedStatus))
@@ -41,7 +41,7 @@ class ManageTicketsShow: TicketsListShow(){
 
     override fun updateInformation() {
         super.updateInformation()
-        this.selectedTicker?.apply{
+        this.selectedTicket?.apply{
             var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown") as DropDown<TicketStatus>
             dropdown.apply {
                 setIsEnabled(true)

@@ -29,7 +29,13 @@ open class TicketsListShow : Show() {
 
     val timeFormatter = SimpleDateFormat("dd.M HH:mm:ss")
 
-    var selectedTicker: Ticket? = null
+    var selectedTicketIndex: Int = -1
+
+    var selectedTicket: Ticket? = null
+        get() = if(selectedTicketIndex >= 0 && selectedTicketIndex < QReportClient.syncedTickets.size)
+                    QReportClient.syncedTickets[selectedTicketIndex]
+                else
+                    null
 
     override fun onInit(){
         super.onInit()
@@ -75,12 +81,12 @@ open class TicketsListShow : Show() {
 
 
     protected  fun select(selected: Ticket){
-        this.selectedTicker = selected
+        this.selectedTicketIndex = QReportClient.syncedTickets.indexOf(selected)
         updateInformation()
     }
 
     open fun updateInformation() {
-        val ticket = this.selectedTicker ?: return
+        val ticket = this.selectedTicket ?: return
         var informationLabel = findComponentById<MultiTextbox>("information_field") as MultiTextbox
         informationLabel.setText(generateInformation(ticket))
         var hasAccess = QReportClient.adminAccess || ticket.sender.equals(Minecraft.getMinecraft().thePlayer.commandSenderName, true)
@@ -113,8 +119,8 @@ open class TicketsListShow : Show() {
 
     private fun addMessage(){
         var message = (findComponentById<MultiTextbox>("new_message_field") as MultiTextbox).text
-        if(this.selectedTicker == null || message.trim().equals("")) return
-        NetworkHandler.instance.sendToServer(AddMessagePacket(this.selectedTicker!!.uid, message))
+        if(this.selectedTicket == null || message.trim().equals("")) return
+        NetworkHandler.instance.sendToServer(AddMessagePacket(this.selectedTicket!!.uid, message))
         NetworkHandler.instance.sendToServer(RequestSyncPacket())
     }
 
