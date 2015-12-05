@@ -6,10 +6,7 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.common.config.Configuration
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.AddMessagePacket
-import ru.redenergy.report.common.network.packet.RequestSyncPacket
-import ru.redenergy.report.common.network.packet.SyncTickets
-import ru.redenergy.report.common.network.packet.TicketPacket
+import ru.redenergy.report.common.network.packet.*
 import ru.redenergy.report.server.backend.ReportManager
 import java.io.File
 
@@ -39,6 +36,7 @@ object QReportServer {
             registerPacket(RequestSyncPacket::class)
             registerPacket(SyncTickets::class)
             registerPacket(AddMessagePacket::class)
+            registerPacket(UpdateAdminAccess::class)
         }
     }
 

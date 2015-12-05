@@ -11,15 +11,19 @@ import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.ReportShow
 import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.AddMessagePacket
-import ru.redenergy.report.common.network.packet.RequestSyncPacket
-import ru.redenergy.report.common.network.packet.SyncTickets
-import ru.redenergy.report.common.network.packet.TicketPacket
+import ru.redenergy.report.common.network.packet.*
 
 @Mod(modid = "qreport-client", name = "QReport - Q&A communication tool for players and admins", modLanguageAdapter = "ru.redenergy.report.kotlin.KotlinAdapter")
 object QReportClient {
 
+    /**
+     * Contains tickets which have been received from server
+     */
     public var syncedTickets : MutableList<Ticket> = arrayListOf()
+    /**
+     * Shows if current player can manage user requests, if set to true 'admin' button will be available
+     */
+    public var adminAccess = false
 
     @Mod.EventHandler
     public fun postInit(event: FMLPostInitializationEvent){
@@ -39,6 +43,7 @@ object QReportClient {
             registerPacket(RequestSyncPacket::class)
             registerPacket(SyncTickets::class)
             registerPacket(AddMessagePacket::class)
+            registerPacket(UpdateAdminAccess::class)
         }
     }
 
