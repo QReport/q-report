@@ -20,7 +20,7 @@ import ru.redenergy.report.common.network.packet.RequestSyncPacket
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TicketsListShow : Show() {
+open class TicketsListShow : Show() {
 
 
     init{
@@ -38,41 +38,48 @@ class TicketsListShow : Show() {
 
     override fun setup(){
         super.setup()
-        registerComponent(TextLabel(this.width / 5, this.height / 5 - 15, this.width / 6, "Tickets:"))
-        registerComponent(ScrollableDisplayList(this.width / 5, this.height / 5, this.width / 6 , this.height / 5 * 3, 45,
-                QReportClient.syncedTickets
-                        .sortedBy { it.messages.get(0).timestamp }
-                        .reversed()
-                        .filter { it.sender.equals(Minecraft.getMinecraft().thePlayer.commandSenderName, true) }
-                        .map { TicketEntry(it, {select(it)}) } ))
-        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 - 15, this.width / 6, "Information about ticket:"))
-        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 23, "Select ticket")
-                        .setBackgroundVisibility(false)
-                        .setMaxLenght(Int.MAX_VALUE)
-                        .setIsEnabled(false)
-                        .setId("information_field"))
-        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 - 15, this.width / 3, "Add message:")
-                        .setIsVisible(false)
-                        .setId("add_message_label"))
-        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2, this.width / 3, this.height / 10)
-                        .setId("new_message_field")
-                        .setIsVisible(false)
-                        .setIsEnabled(false))
-        registerComponent(Button(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 + this.height / 10 + 5, this.width / 3, 20, "Send")
-                        .setIsVisible(false)
-                        .setIsEnabled(false)
-                        .setId("send_message_button")
-                        .setClickListener({ addMessage() }));
-
+        registerComponents()
         updateInformation()
     }
 
-    private fun select(selected: Ticket){
+    open fun registerComponents(){
+        registerComponent(TextLabel(this.width / 5, this.height / 5 - 15, this.width / 6, "Tickets:"))
+        registerComponent(ScrollableDisplayList(this.width / 5, this.height / 5, this.width / 6 , this.height / 5 * 3, 45,
+                getTicketsListContent()))
+        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 - 15, this.width / 6, "Information about ticket:"))
+        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 23, "Select ticket")
+                .setBackgroundVisibility(false)
+                .setMaxLenght(Int.MAX_VALUE)
+                .setIsEnabled(false)
+                .setId("information_field"))
+        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 - 15, this.width / 3, "Add message:")
+                .setIsVisible(false)
+                .setId("add_message_label"))
+        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2, this.width / 3, this.height / 10)
+                .setId("new_message_field")
+                .setIsVisible(false)
+                .setIsEnabled(false))
+        registerComponent(Button(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 + this.height / 10 + 5, this.width / 3, 20, "Send")
+                .setIsVisible(false)
+                .setIsEnabled(false)
+                .setId("send_message_button")
+                .setClickListener({ addMessage() }));
+    }
+
+    open fun getTicketsListContent(): List<TicketEntry> =
+            QReportClient.syncedTickets
+            .sortedBy { it.messages.get(0).timestamp }
+            .reversed()
+            .filter { it.sender.equals(Minecraft.getMinecraft().thePlayer.commandSenderName, true) }
+            .map { TicketEntry(it, {select(it)}) }
+
+
+    protected  fun select(selected: Ticket){
         this.selectedTicker = selected
         updateInformation()
     }
 
-    private fun updateInformation() {
+    open fun updateInformation() {
         val ticket = this.selectedTicker ?: return
         var informationLabel = findComponentById<MultiTextbox>("information_field") as MultiTextbox
         informationLabel.setText(generateInformation(ticket))
