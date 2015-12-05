@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.ReportShow
+import ru.redenergy.report.client.ui.SupportShow
 import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.*
@@ -50,8 +51,7 @@ object QReportClient {
     private fun registerKeys(){
         NetworkHandler.instance.postInitialize()
         var keyboardController = KeyboardController()
-        keyboardController.register(Keyboard.KEY_R, "Opens ticket form") { if(Keyboard.isKeyDown(Keyboard.KEY_TAB)) GuiFoundation.display(ReportShow()) }
-        keyboardController.register(Keyboard.KEY_G, "Opens tickets list") { if(Keyboard.isKeyDown(Keyboard.KEY_TAB)) GuiFoundation.display(TicketsListShow()) }
+        keyboardController.register(Keyboard.KEY_R, "Support center") { if(Keyboard.isKeyDown(Keyboard.KEY_TAB)) GuiFoundation.display(SupportShow()) }
         keyboardController.submit()
     }
 }
