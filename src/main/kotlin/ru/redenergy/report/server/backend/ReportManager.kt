@@ -41,16 +41,22 @@ class ReportManager(val connectionSource: ConnectionSource) {
 
     public fun getTickets(): MutableList<Ticket> = ticketDao.queryForAll()
 
+    public fun getTicketsByPlayer(player: String): MutableList<Ticket> =
+        ticketDao.queryBuilder().where().eq("sender", player).query()
+
     public fun deleteTicket(ticket: Ticket) = ticketDao.delete(ticket)
 
-    public fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) = newTicket(text, reason, player.commandSenderName)
+    public fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) =
+            newTicket(text, reason, player.commandSenderName)
 
     public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(
             Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
 
     public fun handleSyncRequest(player: EntityPlayerMP) {
         NetworkHandler.instance.sendTo(UpdateAdminAccess(canAccessTicketManagement(player)), player)
-        NetworkHandler.instance.sendTo(SyncTickets(getTickets()), player)
+        var tickets = if (canAccessTicketManagement(player)) getTickets()
+                      else getTicketsByPlayer(player.commandSenderName)
+        NetworkHandler.instance.sendTo(SyncTickets(tickets), player)
     }
 
     public fun handleAddMessage(ticketUid: UUID, message: String, player: EntityPlayerMP) {
