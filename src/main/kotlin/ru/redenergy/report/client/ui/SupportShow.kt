@@ -6,6 +6,7 @@ import com.rabbit.gui.component.display.TextLabel
 import com.rabbit.gui.render.TextAlignment
 import com.rabbit.gui.show.Show
 import ru.redenergy.report.client.QReportClient
+import ru.redenergy.report.client.ui.admin.ManageTicketsShow
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.RequestSyncPacket
 
@@ -25,7 +26,8 @@ class SupportShow: Show() {
         registerComponent(Button(this.width / 3, this.height / 3 + 30, this.width / 3, 20, "Previous tickets")
                         .setClickListener { this.getStage().display(TicketsListShow()) })
         if(QReportClient.adminAccess)
-            registerComponent(Button(this.width / 3, this.height /3 + 60, this.width / 3, 20, "Manage tickets"))
+            registerComponent(Button(this.width / 3, this.height /3 + 60, this.width / 3, 20, "Manage tickets")
+                        .setClickListener { this.getStage().display(ManageTicketsShow()) })
         registerComponent(Button(this.width / 3, this.height / 3 * 2 + 10, this.width / 3, 20, "Close")
                         .setClickListener { this.getStage().displayPrevious() })
     }
