@@ -32,7 +32,7 @@ class Ticket {
 
     var status: TicketStatus
         public get
-        private set
+        public set
 
     /**
      * Message history <br>
