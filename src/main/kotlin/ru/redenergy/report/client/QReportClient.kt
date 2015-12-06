@@ -14,7 +14,7 @@ import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.*
 
-@Mod(modid = "qreport-client", name = "QReport - Q&A communication tool for players and admins", modLanguageAdapter = "ru.redenergy.report.kotlin.KotlinAdapter")
+@Mod(modid = "qreport-client", name = "QReport Client", modLanguageAdapter = "ru.redenergy.report.kotlin.KotlinAdapter")
 object QReportClient {
 
     /**

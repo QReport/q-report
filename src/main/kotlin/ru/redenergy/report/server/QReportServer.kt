@@ -10,7 +10,7 @@ import ru.redenergy.report.common.network.packet.*
 import ru.redenergy.report.server.backend.ReportManager
 import java.io.File
 
-@Mod(modid = "qreport-server", name = "QReport - Q&A communication tool for players and admins", modLanguageAdapter = "ru.redenergy.report.kotlin.KotlinAdapter")
+@Mod(modid = "qreport-server", name = "QReport Server", modLanguageAdapter = "ru.redenergy.report.kotlin.KotlinAdapter")
 object QReportServer {
 
     lateinit var ticketManager: ReportManager
