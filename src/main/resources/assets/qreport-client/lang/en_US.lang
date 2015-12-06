@@ -8,3 +8,26 @@ ticket.reason.other=Other
 ticket.status.open=Open
 ticket.status.inprogress=In progress
 ticket.status.closed=Closed
+
+#ui strings
+##report
+show.report.problem=Describe your problem:
+show.report.category=Related category:
+show.report.send=Send
+show.report.close=Close
+
+##support
+show.support.title=Support center
+show.support.new=New ticket
+show.support.previous=Previous tickets
+show.support.manage=Manage tickets
+show.support.close=Close
+
+##tickets
+show.tickets.list.title=Tickets:
+show.tickets.box.title=Information about ticket:
+show.tickets.select=Select ticket...
+show.tickets.label.title=Add message:
+show.tickets.send=Send
+show.tickets.reason=Reason:
+show.tickets.status=Status:
