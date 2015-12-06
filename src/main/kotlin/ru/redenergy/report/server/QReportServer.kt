@@ -1,4 +1,4 @@
-package ru.redenergy.report.client
+package ru.redenergy.report.server
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource
 import cpw.mods.fml.common.Mod

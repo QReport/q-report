@@ -5,7 +5,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.entity.player.EntityPlayerMP
-import ru.redenergy.report.client.QReportServer
+import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.network.AbstractPacket
 import java.util.*
