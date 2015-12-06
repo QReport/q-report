@@ -25,7 +25,7 @@ repositories{
     }
 }
 
-version = "0.0.1"
+version = "0.0.2"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
 
@@ -37,19 +37,27 @@ minecraft {
 
 
 configurations {
+    kotlin
+    client
+    server
     shade
+
+    server.extendsFrom kotlin
+    client.extendsFrom kotlin
+    shade.extendsFrom(client, server, kotlin)
     compile.extendsFrom shade
 }
 
 dependencies {
-    shade 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
-    shade 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
+    kotlin 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
+    kotlin 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
 
-    compile 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT'
-    compile 'com.j256.ormlite:ormlite-core:4.48'
-    compile 'com.j256.ormlite:ormlite-jdbc:4.48'
-    compile 'org.xerial:sqlite-jdbc:3.7.2'
-    compile 'mysql:mysql-connector-java:5.1.37'
+    client 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT'
+    
+    server 'com.j256.ormlite:ormlite-core:4.48'
+    server 'com.j256.ormlite:ormlite-jdbc:4.48'
+    server 'org.xerial:sqlite-jdbc:3.7.2'
+    server 'mysql:mysql-connector-java:5.1.37'
 
     testCompile 'junit:junit:4.12'
 }
@@ -60,6 +68,37 @@ jar{
             exclude 'META-ING', 'META-INF/**'
         }
     }
+    classifier = 'standalone'
+}
+
+task serverJar(type: Jar){
+    from sourceSets.main.output
+    exclude 'ru/redenergy/report/client/**'
+    configurations.server.each{ dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-ING', 'META-INF/**'
+        }
+    }
+    classifier = 'server'
+}
+
+task clientJar(type: Jar){
+    from sourceSets.main.output
+    exclude 'ru/redenergy/report/server/**'
+    configurations.client.each{ dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-ING', 'META-INF/**'
+        }
+    }
+    classifier = 'client'
+}
+
+tasks.build.dependsOn('serverJar', 'clientJar')
+
+artifacts{
+    jar
+    serverJar
+    clientJar
 }
 
 sourceSets {
