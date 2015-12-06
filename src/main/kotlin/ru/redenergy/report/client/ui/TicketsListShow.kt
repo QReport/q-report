@@ -11,6 +11,7 @@ import com.rabbit.gui.component.list.entries.ListEntry
 import com.rabbit.gui.render.TextRenderer
 import com.rabbit.gui.show.Show
 import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.I18n
 import net.minecraft.util.EnumChatFormatting
 import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.common.entity.Ticket
@@ -49,23 +50,23 @@ open class TicketsListShow : Show() {
     }
 
     open fun registerComponents(){
-        registerComponent(TextLabel(this.width / 5, this.height / 5 - 15, this.width / 6, "Tickets:"))
+        registerComponent(TextLabel(this.width / 5, this.height / 5 - 15, this.width / 6, I18n.format("show.tickets.list.title")))
         registerComponent(ScrollableDisplayList(this.width / 5, this.height / 5, this.width / 6 , this.height / 5 * 3, 45,
                 getTicketsListContent()))
-        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 - 15, this.width / 6, "Information about ticket:"))
-        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 23, "Select ticket")
+        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 - 15, this.width / 6, I18n.format("show.tickets.box.title")))
+        registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5, this.width / 3 - 15, this.height / 4 * 2 - 23, I18n.format("show.tickets.select"))
                 .setBackgroundVisibility(false)
                 .setMaxLenght(Int.MAX_VALUE)
                 .setIsEnabled(false)
                 .setId("information_field"))
-        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 - 15, this.width / 3, "Add message:")
+        registerComponent(TextLabel(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 - 15, this.width / 3, I18n.format("show.tickets.label.title"))
                 .setIsVisible(false)
                 .setId("add_message_label"))
         registerComponent(MultiTextbox(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2, this.width / 3, this.height / 10)
                 .setId("new_message_field")
                 .setIsVisible(false)
                 .setIsEnabled(false))
-        registerComponent(Button(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 + this.height / 10 + 5, this.width / 3, 20, "Send")
+        registerComponent(Button(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 + this.height / 10 + 5, this.width / 3, 20, I18n.format("show.tickets.send"))
                 .setIsVisible(false)
                 .setIsEnabled(false)
                 .setId("send_message_button")
@@ -135,8 +136,8 @@ open class TicketsListShow : Show() {
        override fun onDraw(list: DisplayList?, posX: Int, posY: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) {
            TextRenderer.renderString(posX + 5, posY + 5, ticket.sender)
            TextRenderer.renderString(posX + 5, posY + 15, ticket.shortUid())
-           TextRenderer.renderString(posX + 5, posY + 25, "Reason: " + ticket.reason.getTranslation())
-           TextRenderer.renderString(posX + 5, posY + 35, "${EnumChatFormatting.WHITE}Status: ${EnumChatFormatting.RESET}" + ticket.status.getTranslation(), ticket.status.color)
+           TextRenderer.renderString(posX + 5, posY + 25, I18n.format("show.tickets.reason") + ticket.reason.getTranslation())
+           TextRenderer.renderString(posX + 5, posY + 35, "${EnumChatFormatting.WHITE}${I18n.format("show.tickets.status")} ${EnumChatFormatting.RESET}" + ticket.status.getTranslation(), ticket.status.color)
        }
    }
 
