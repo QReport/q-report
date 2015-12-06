@@ -1,0 +1,33 @@
+#Reasons
+ticket.reason.bug=Баг
+ticket.reason.grief=Нарушение
+ticket.reason.suggest=Предложение
+ticket.reason.other=Другое
+
+#Statuses
+ticket.status.open=Открыт
+ticket.status.inprogress=В процессе
+ticket.status.closed=Закрыт
+
+#ui strings
+##report
+show.report.problem=Опишите вашу проблему:
+show.report.category=Категория:
+show.report.send=Отправить
+show.report.close=Закрыть
+
+##support
+show.support.title=Центр поддержки
+show.support.new=Новая заявка
+show.support.previous=Предыдущие заявки
+show.support.manage=Управление заявками
+show.support.close=Закрыть
+
+##tickets
+show.tickets.list.title=Заявки:
+show.tickets.box.title=Информация:
+show.tickets.select=Выберите заявку...
+show.tickets.label.title=Добавить сообшение:
+show.tickets.send=Отправить
+show.tickets.reason=Категория: 
+show.tickets.status=Статус:
