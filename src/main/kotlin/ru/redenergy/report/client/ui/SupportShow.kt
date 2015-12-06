@@ -5,6 +5,7 @@ import com.rabbit.gui.component.control.Button
 import com.rabbit.gui.component.display.TextLabel
 import com.rabbit.gui.render.TextAlignment
 import com.rabbit.gui.show.Show
+import net.minecraft.client.resources.I18n
 import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.client.ui.admin.ManageTicketsShow
 import ru.redenergy.report.common.network.NetworkHandler
@@ -19,16 +20,16 @@ class SupportShow: Show() {
 
     override fun setup() {
         super.setup()
-        registerComponent(TextLabel(this.width / 3, this.height / 3 / 2, this.width / 3, "Support center")
+        registerComponent(TextLabel(this.width / 3, this.height / 3 / 2, this.width / 3, I18n.format("show.support.title"))
                         .setTextAlignment(TextAlignment.CENTER))
-        registerComponent(Button(this.width / 3, this.height / 3, this.width / 3, 20, "New ticket")
+        registerComponent(Button(this.width / 3, this.height / 3, this.width / 3, 20, I18n.format("show.support.new"))
                         .setClickListener { this.getStage().display(ReportShow()) })
-        registerComponent(Button(this.width / 3, this.height / 3 + 30, this.width / 3, 20, "Previous tickets")
+        registerComponent(Button(this.width / 3, this.height / 3 + 30, this.width / 3, 20, I18n.format("show.support.previous"))
                         .setClickListener { this.getStage().display(TicketsListShow()) })
         if(QReportClient.adminAccess)
-            registerComponent(Button(this.width / 3, this.height /3 + 60, this.width / 3, 20, "Manage tickets")
+            registerComponent(Button(this.width / 3, this.height /3 + 60, this.width / 3, 20, I18n.format("show.support.manage"))
                         .setClickListener { this.getStage().display(ManageTicketsShow()) })
-        registerComponent(Button(this.width / 3, this.height / 3 * 2 + 10, this.width / 3, 20, "Close")
+        registerComponent(Button(this.width / 3, this.height / 3 * 2 + 10, this.width / 3, 20, I18n.format("show.support.close"))
                         .setClickListener { this.getStage().displayPrevious() })
     }
 }
