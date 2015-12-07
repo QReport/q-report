@@ -15,11 +15,13 @@ object QReportServer {
 
     lateinit var ticketManager: ReportManager
     var jdbcPath = "jdbc:sqlite:${File("").absolutePath}/reports.sqlite"
+    var usePermission = false
 
     @Mod.EventHandler
     public fun preInit(event: FMLPreInitializationEvent){
         var config = Configuration(event.suggestedConfigurationFile)
         this.jdbcPath = config.getString("jdbc path", "Database", jdbcPath, "JDBC database path can be mysql or sqlite")
+        this.usePermission = config.getBoolean("user permission", "Ticket Management", false, "If enabled will give access to manage tickets only to users with permission node")
         config.save()
         ticketManager = ReportManager(JdbcConnectionSource(jdbcPath))
         NetworkHandler.instance.initialise()
