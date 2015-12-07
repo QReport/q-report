@@ -1,3 +1,5 @@
+import net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec
+
 buildscript {
     repositories {
         mavenCentral()
@@ -40,7 +42,7 @@ archivesBaseName = "qreport"
 minecraft {
     version = "1.7.10-10.13.4.1564-1.7.10"
     runDir = "eclipse"
-    srgExtra "PK: kotlin ru/redenergy/report/repack/kotlin"
+//    srgExtra "PK: kotlin ru/redenergy/report/repack/kotlin"
 }
 
 
@@ -73,7 +75,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-jar{
+jar {
     configurations.shade.each{ dep ->
         if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
             from(project.zipTree(dep)) {
@@ -116,13 +118,15 @@ task clientJar(type: Jar){
     classifier = 'client'
 }
 
-reobf{
-    reobf clientJar { classpath -> classpath = configurations.compile }
-    reobf serverJar { classpath -> classpath = configurations.compile }
+def action = new Action<net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec>(){
+    void execute(ArtifactSpec artifactSpec) {
+        artifactSpec.classpath = sourceSets.main.compileClasspath
+    }
 }
+reobf.reobf(clientJar, action}
+reobf.reobf(serverJar, action)
 
-
-tasks.reobf.dependsOn('serverJar', 'clientJar')
+tasks.jar.dependsOn('serverJar', 'clientJar')
 
 artifacts{
     jar
@@ -150,3 +154,4 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
