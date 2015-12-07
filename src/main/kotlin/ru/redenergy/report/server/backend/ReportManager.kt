@@ -104,7 +104,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
     private fun canAccessTicketManagement(player: EntityPlayerMP): Boolean {
         if(MinecraftServer.getServer().isDedicatedServer){
             if(QReportServer.usePermission){
-                return ForgeVault.getPermission()?.has(null as String, player.commandSenderName, TICKETS_MANAGEMENT_PERMISSION_NODE) ?: false
+                return ForgeVault.getPermission()?.has(null as String?, player.commandSenderName, TICKETS_MANAGEMENT_PERMISSION_NODE) ?: false
             } else {
                 return isOp(player)
             }
