@@ -58,11 +58,13 @@ configurations {
 
 dependencies {
     kotlin 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
-    kotlin 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
+    kotlin 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-beta-2423'
+    kotlin 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
+//    kotlin 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
 
     client 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT'
 
-    server 'com.github.FRedEnergy:forge-vault:1.0'
+    server 'com.github.FRedEnergy:forge-vault:c2d5527281'
     server 'com.j256.ormlite:ormlite-core:4.48'
     server 'com.j256.ormlite:ormlite-jdbc:4.48'
     server 'org.xerial:sqlite-jdbc:3.7.2'
@@ -73,7 +75,7 @@ dependencies {
 
 jar{
     configurations.shade.each{ dep ->
-        if(!dep.getName().contains("bukkit")) {
+        if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
             from(project.zipTree(dep)) {
                 exclude 'META-ING', 'META-INF/**'
             }
@@ -81,13 +83,16 @@ jar{
     }
     classifier = 'standalone'
 }
+
+
+
 task serverJar(type: Jar){
     from (sourceSets.main.output) {
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         exclude 'ru/redenergy/report/client/**'
     }
     configurations.server.each{ dep ->
-        if(!dep.getName().contains("bukkit")) {
+        if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
             from(project.zipTree(dep)) {
                 exclude 'META-ING', 'META-INF/**'
             }
@@ -102,14 +107,22 @@ task clientJar(type: Jar){
         exclude 'ru/redenergy/report/server/**'
     }
     configurations.client.each{ dep ->
-        from(project.zipTree(dep)) {
-             exclude 'META-ING', 'META-INF/**'
+        if(!dep.getName().contains("Forgelin")) {
+            from(project.zipTree(dep)) {
+                exclude 'META-ING', 'META-INF/**'
+            }
         }
     }
     classifier = 'client'
 }
 
-tasks.jar.dependsOn('serverJar', 'clientJar')
+reobf{
+    reobf clientJar { classpath -> classpath = configurations.compile }
+    reobf serverJar { classpath -> classpath = configurations.compile }
+}
+
+
+tasks.reobf.dependsOn('serverJar', 'clientJar')
 
 artifacts{
     jar
