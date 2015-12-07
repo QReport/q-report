@@ -18,10 +18,14 @@ import ru.redenergy.report.common.entity.TicketMessage
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.SyncTickets
 import ru.redenergy.report.common.network.packet.UpdateAdminAccess
+import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.server.orm.JsonPersister
+import ru.redenergy.vault.ForgeVault
 import java.util.*
 
 class ReportManager(val connectionSource: ConnectionSource) {
+
+    val TICKETS_MANAGEMENT_PERMISSION_NODE = "qreport.tickets.access"
 
     init{
         DataPersisterManager.registerDataPersisters(JsonPersister.getSingleton())
@@ -99,9 +103,13 @@ class ReportManager(val connectionSource: ConnectionSource) {
      */
     private fun canAccessTicketManagement(player: EntityPlayerMP): Boolean {
         if(MinecraftServer.getServer().isDedicatedServer){
-            return isOp(player)
+            if(QReportServer.usePermission){
+                return ForgeVault.getPermission()?.has(null as String, player.commandSenderName, TICKETS_MANAGEMENT_PERMISSION_NODE) ?: false
+            } else {
+                return isOp(player)
+            }
         } else {
-            return player.capabilities.isCreativeMode //just for testing
+            return player.capabilities.isCreativeMode
         }
 
     }
