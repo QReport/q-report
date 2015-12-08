@@ -52,10 +52,8 @@ configurations {
     server
     shade
 
-    server.extendsFrom kotlin
-    client.extendsFrom kotlin
-    shade.extendsFrom(client, server, kotlin)
-    compile.extendsFrom shade
+    shade.extendsFrom(client, server)
+    compile.extendsFrom shade, kotlin
 }
 
 dependencies {
