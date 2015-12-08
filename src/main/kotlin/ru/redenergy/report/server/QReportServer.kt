@@ -14,16 +14,22 @@ import java.io.File
 object QReportServer {
 
     lateinit var ticketManager: ReportManager
-    var jdbcPath = "jdbc:sqlite:${File("").absolutePath}/reports.sqlite"
-    var usePermission = false
+    var jdbcPath = "jdbc:sqlite:${File("").absolutePath}\\reports.sqlite"
+    var checkPermission = false
+    var permissionNode = "qreport.tickets.access"
+    var jdbcLogin = " "
+    var jdbcPassword = " "
 
     @Mod.EventHandler
     public fun preInit(event: FMLPreInitializationEvent){
         var config = Configuration(event.suggestedConfigurationFile)
-        this.jdbcPath = config.getString("jdbc path", "Database", jdbcPath, "JDBC database path can be mysql or sqlite")
-        this.usePermission = config.getBoolean("user permission", "Ticket Management", false, "If enabled will give access to manage tickets only to users with permission node")
+        this.jdbcPath = config.getString("jdbc", "QReport DB", jdbcPath, "JDBC database path. Currently supported: MySQL and SQLite")
+        this.jdbcLogin = config.getString("jdbc-login", "QReport DB", jdbcLogin, "Login for database connection, leave empty if no authorization needed")
+        this.jdbcPassword = config.getString("jdbc-password", "QReport DB", jdbcPassword, "Password for database connection, leave empty if no authorization needed")
+        this.checkPermission = config.getBoolean("check-permission", "QReport Permission", checkPermission, "If enabled - access to ticket management would be given only to users with specified permission node")
+        this.permissionNode = config.getString("permission", "QReport Permission", permissionNode, "Permission node required to manage tickets (make sure you enabled 'check-permission')")
         config.save()
-        ticketManager = ReportManager(JdbcConnectionSource(jdbcPath))
+        ticketManager = ReportManager(JdbcConnectionSource(jdbcPath, jdbcLogin, jdbcPassword))
         NetworkHandler.instance.initialise()
     }
 
