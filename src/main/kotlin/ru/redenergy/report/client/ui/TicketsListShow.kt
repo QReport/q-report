@@ -70,7 +70,9 @@ open class TicketsListShow : Show() {
                 .setIsVisible(false)
                 .setIsEnabled(false)
                 .setId("send_message_button")
-                .setClickListener({ addMessage() }));
+                .setClickListener({ addMessage() }))
+        registerComponent(Button(this.width / 5 + this.width / 6 + 15, this.height / 5 + this.height / 4 * 2 + this.height / 10 + 5 + 22, this.width / 3, 20, I18n.format("show.report.close"))
+                .setClickListener { this.getStage().displayPrevious() })
     }
 
     open fun getTicketsListContent(): List<TicketEntry> =
