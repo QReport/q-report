@@ -25,8 +25,6 @@ import java.util.*
 
 class ReportManager(val connectionSource: ConnectionSource) {
 
-    val TICKETS_MANAGEMENT_PERMISSION_NODE = "qreport.tickets.access"
-
     init{
         DataPersisterManager.registerDataPersisters(JsonPersister.getSingleton())
     }
@@ -103,8 +101,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
      */
     private fun canAccessTicketManagement(player: EntityPlayerMP): Boolean {
         if(MinecraftServer.getServer().isDedicatedServer){
-            if(QReportServer.usePermission){
-                return ForgeVault.getPermission()?.has(null as String?, player.commandSenderName, TICKETS_MANAGEMENT_PERMISSION_NODE) ?: false
+            if(QReportServer.checkPermission){
+                return ForgeVault.getPermission()?.has(null as String?, player.commandSenderName, QReportServer.permissionNode) ?: false
             } else {
                 return isOp(player)
             }
