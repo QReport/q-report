@@ -1,0 +1,16 @@
+[
+{
+  "modid": "qreport-client",
+  "name": "QReport",
+  "description": "Q&A communication tool for players and admins",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/FRedEnergy/q-report",
+  "updateUrl": "",
+  "authorList": ["RedEnergy"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
