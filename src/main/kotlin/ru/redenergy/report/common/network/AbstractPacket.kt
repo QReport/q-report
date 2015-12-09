@@ -5,14 +5,27 @@ import io.netty.channel.ChannelHandlerContext
 import net.minecraft.entity.player.EntityPlayer
 
 /**
- * Rewritten in Kotlin
+ * Representation of network packet
  */
 interface AbstractPacket {
-    abstract fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf)
 
-    abstract fun decodeInto(ctx: ChannelHandlerContext, buf: ByteBuf)
+    /**
+     * Extracts variables from packet into given ByteBuf
+     */
+    fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf)
 
-    abstract fun handleClient(player: EntityPlayer)
+    /**
+     * Imports variables from given ByteBuf to the packet object
+     */
+    fun decodeInto(ctx: ChannelHandlerContext, buf: ByteBuf)
 
-    abstract fun handleServer(player: EntityPlayer)
+    /**
+     * Called when packet is received on client
+     */
+    fun handleClient(player: EntityPlayer)
+
+    /**
+     * Called when packet is received on server
+     */
+    fun handleServer(player: EntityPlayer)
 }

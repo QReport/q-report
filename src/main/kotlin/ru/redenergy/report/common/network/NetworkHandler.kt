@@ -21,13 +21,24 @@ import kotlin.reflect.KClass
  * Rewritten in Kotlin
  */
 @ChannelHandler.Sharable
-public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
+public class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
 
-    private var channels: EnumMap<Side, FMLEmbeddedChannel>? = null
-    private var initialized: Boolean = false
-    private var postInitialized: Boolean = false
+    /**
+     * Synchronous message channel pair based on netty
+     */
+    private lateinit var channels: EnumMap<Side, FMLEmbeddedChannel>
+
+    /**
+     * Contains packets, registered in current network
+     */
     private var packets : MutableList<KClass<out AbstractPacket>> = arrayListOf()
 
+    private var initialized: Boolean = false
+    private var postInitialized: Boolean = false
+
+    /**
+     * Initializes Netty channels
+     */
     public fun initialise(){
         if(!initialized){
             channels = NetworkRegistry.INSTANCE.newChannel("qreport", this)
@@ -35,6 +46,11 @@ public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPac
         }
     }
 
+    /**
+     * Registers packet in network <br>
+     * Returns <code>true</code> if packet has been successfully registered, <code>false</code> otherwise <br>
+     * Note: max packet limit is 256 (because it's max value one byte can store)
+     */
     public fun registerPacket(type: KClass<out AbstractPacket>) : Boolean{
         if(this.packets.size > 256 || this.packets.contains(type) || this.postInitialized){
             return false
@@ -43,6 +59,9 @@ public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPac
         return true
     }
 
+    /**
+     * Sorts packets and disables new packets registration
+     */
     public fun postInitialize(){
         if(postInitialized){
             this.packets.sortBy { it.qualifiedName }
@@ -50,10 +69,13 @@ public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPac
         }
     }
 
+    /**
+     * Called when packet is received
+     */
     override fun decode(ctx: ChannelHandlerContext, msg: FMLProxyPacket, out: MutableList<Any>) {
         var payload = msg.payload()
         var discriminator = payload.readByte()
-        var type = this.packets.get(discriminator.toInt())
+        var type = this.packets[discriminator.toInt()]
         var packet = UnsafeAllocator.create().newInstance(type.java)
         packet.decodeInto(ctx, payload.slice())
         when(FMLCommonHandler.instance().effectiveSide){
@@ -68,6 +90,9 @@ public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPac
         out.add(packet)
     }
 
+    /**
+     * Called when packet is sent
+     */
     override fun encode(ctx: ChannelHandlerContext, msg: AbstractPacket, out: MutableList<Any>) {
         var buffer = Unpooled.buffer()
         var type : KClass<out AbstractPacket> = msg.javaClass.kotlin
@@ -79,32 +104,47 @@ public class  NetworkHandler : MessageToMessageCodec<FMLProxyPacket, AbstractPac
         out.add(FMLProxyPacket(buffer.copy(), ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get()))
     }
 
-    fun sendToAll(message:AbstractPacket) {
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL)
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).writeAndFlush(message)
+    /**
+     * Sends packet to everyone on server
+     */
+    fun sendToAll(message: AbstractPacket) {
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL)
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).writeAndFlush(message)
     }
 
-    fun sendTo(message:AbstractPacket, player: EntityPlayerMP) {
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER)
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player)
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).writeAndFlush(message)
+    /**
+     * Sends packet to specified player
+     */
+    fun sendTo(message: AbstractPacket, player: EntityPlayerMP) {
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER)
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player)
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).writeAndFlush(message)
     }
 
-    fun sendToAllAround(message:AbstractPacket, point: NetworkRegistry.TargetPoint) {
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT)
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point)
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).writeAndFlush(message)
+    /**
+     * Sends packet to everyone in given target point
+     */
+    fun sendToAllAround(message: AbstractPacket, point: NetworkRegistry.TargetPoint) {
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT)
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point)
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).writeAndFlush(message)
     }
 
-    fun sendToDimension(message:AbstractPacket, dimensionId:Int) {
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION)
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(Integer.valueOf(dimensionId))
-        (this.channels?.get(Side.SERVER) as FMLEmbeddedChannel).writeAndFlush(message)
+    /**
+     * Sends packet to everyone in dimension with given id
+     */
+    fun sendToDimension(message: AbstractPacket, dimensionId: Int) {
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION)
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(Integer.valueOf(dimensionId))
+        (this.channels[Side.SERVER] as FMLEmbeddedChannel).writeAndFlush(message)
     }
 
+    /**
+     * Sends packet to the server
+     */
     fun sendToServer(message:AbstractPacket) {
-        (this.channels?.get(Side.CLIENT) as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER)
-        (this.channels?.get(Side.CLIENT) as FMLEmbeddedChannel).writeAndFlush(message)
+        (this.channels[Side.CLIENT] as FMLEmbeddedChannel).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER)
+        (this.channels[Side.CLIENT] as FMLEmbeddedChannel).writeAndFlush(message)
     }
 
     companion object {
