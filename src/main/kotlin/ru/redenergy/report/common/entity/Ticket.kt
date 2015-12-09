@@ -6,41 +6,14 @@ import java.util.*
 
 /**
  * Represents report ticket
+ * @constructor
+ * @param uid - identifier of a ticket, if not provided will be generated randomly
+ * @param status - current status of ticket
+ * @param sender - original sender of a ticket
+ * @param reason - reason of a ticket
+ * @param messages - messages in ticket Note: in database this field will be persisted as json string, check out [ru.redenergy.report.server.orm.JsonPersister]
  */
-class Ticket {
-
-    /**
-     * Primary key and identifier of ticket
-     */
-    var uid: UUID
-        public get
-        private set
-
-    /**
-     * Original ticket initiator
-     */
-    var sender: String
-        public get
-        private set
-
-    /**
-     * Original reason of ticket
-     */
-    var reason: TicketReason
-        public get
-        private set
-
-    var status: TicketStatus
-        public get
-        public set
-
-    /**
-     * Message history <br>
-     * Note: in database this field will be persisted as json string, check out [ru.redenergy.report.server.orm.JsonPersister]
-     */
-    var messages: MutableList<TicketMessage>
-        public get
-        private set
+data class Ticket(var uid: UUID = UUID.randomUUID(), var status: TicketStatus, var sender: String, var reason: TicketReason, var messages: MutableList<TicketMessage>) {
 
     /**
      * A short representation of uuid <br>
@@ -53,26 +26,6 @@ class Ticket {
     /**
      * Empty constructor requested by ORMLite
      */
-    private constructor(){
-        this.uid = UUID.randomUUID()
-        this.sender = "unknown"
-        this.status = TicketStatus.OPEN
-        this.reason = TicketReason.OTHER
-        this.messages = arrayListOf()
-    }
+    private constructor(): this(UUID.randomUUID(), TicketStatus.OPEN, "unknown", TicketReason.OTHER, arrayListOf())
 
-    /**
-     * @param uid - identifier of a ticket, if not provided will be generated randomly
-     * @param status - current status of ticket
-     * @param sender - original sender of a ticket
-     * @param reason - reason of a ticket
-     * @param messages - messages in ticket
-     */
-    constructor(uid: UUID = UUID.randomUUID(), status: TicketStatus, sender: String, reason: TicketReason, messages: MutableList<TicketMessage>){
-        this.uid = uid
-        this.status = status
-        this.sender = sender
-        this.reason = reason
-        this.messages = messages
-    }
 }
