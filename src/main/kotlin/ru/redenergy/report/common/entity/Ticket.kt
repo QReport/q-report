@@ -43,6 +43,14 @@ class Ticket {
         private set
 
     /**
+     * A short representation of uuid <br>
+     * In general, it just returns the first 8 symbols of uuid <br>
+     * Should be used as human readable uuid, because full uuid is too long to remember
+     */
+    val shortUid: String
+        get() = this.uid.toString().substring(0, 8)
+
+    /**
      * Empty constructor requested by ORMLite
      */
     private constructor(){
@@ -67,12 +75,4 @@ class Ticket {
         this.reason = reason
         this.messages = messages
     }
-
-    /**
-     * A short representation of uuid <br>
-     * In general, it just returns the first 8 symbols of uuid <br>
-     * Should be used as human readable uuid, because full uuid is too long to remember
-     */
-    public fun shortUid(): String = this.uid.toString().substring(0, 8)
-
 }

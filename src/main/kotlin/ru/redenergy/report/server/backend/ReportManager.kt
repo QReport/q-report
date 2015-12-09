@@ -122,7 +122,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticket.status = status
             ticketDao.update(ticket)
         } else {
-            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid()}."))
+            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
     }
 
@@ -140,7 +140,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticket.messages.add(ticketMessage)
             ticketDao.update(ticket)
         } else {
-            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid()}."))
+            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
     }
 
