@@ -23,14 +23,22 @@ object QReportServer {
     @Mod.EventHandler
     public fun preInit(event: FMLPreInitializationEvent){
         var config = Configuration(event.suggestedConfigurationFile)
+        loadConfig(config)
+        config.save()
+        ticketManager = ReportManager(JdbcConnectionSource(jdbcPath, jdbcLogin, jdbcPassword))
+        NetworkHandler.instance.initialise()
+    }
+
+    /**
+     * Loads server variables from given config
+     */
+    private fun loadConfig(config: Configuration){
         this.jdbcPath = config.getString("jdbc", "QReport DB", jdbcPath, "JDBC database path. Currently supported: MySQL and SQLite")
         this.jdbcLogin = config.getString("jdbc-login", "QReport DB", jdbcLogin, "Login for database connection, leave empty if no authorization needed")
         this.jdbcPassword = config.getString("jdbc-password", "QReport DB", jdbcPassword, "Password for database connection, leave empty if no authorization needed")
         this.checkPermission = config.getBoolean("check-permission", "QReport Permission", checkPermission, "If enabled - access to ticket management would be given only to users with specified permission node")
         this.permissionNode = config.getString("permission", "QReport Permission", permissionNode, "Permission node required to manage tickets (make sure you enabled 'check-permission')")
-        config.save()
-        ticketManager = ReportManager(JdbcConnectionSource(jdbcPath, jdbcLogin, jdbcPassword))
-        NetworkHandler.instance.initialise()
+
     }
 
     @Mod.EventHandler
@@ -38,6 +46,9 @@ object QReportServer {
         registerPackets()
     }
 
+    /**
+     * Registers packets in NetworkHandler instance
+     */
     private fun registerPackets(){
         NetworkHandler.instance.apply {
             registerPacket(TicketPacket::class)
