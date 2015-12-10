@@ -4,7 +4,7 @@ This is a modification for Minecraft based on Forge Mod Loader adds in game tick
 #For End Users
 Note: currently only 1.7.10 version of the game supported
 
-1. Install Forgelin mod for 1.7.10 (you can get it [here](https://github.com/FRedEnergy/Forgelin/releases/tag/v0.1.0)
+1. Install Forgelin mod for 1.7.10 (you can get it [here](https://github.com/FRedEnergy/Forgelin/releases/tag/v0.1.0))
 2. Download q-report mod. There are different versions available:
   * [qreport-client](https://github.com/FRedEnergy/q-report/releases/download/v1.0/qreport-v1.0-client.jar) - lightweight version for client, without unnecessary server dependencies. Won't work in single player
   * [qreport-server](https://github.com/FRedEnergy/q-report/releases/download/v1.0/qreport-v1.0-server.jar) - server side version, without client part
