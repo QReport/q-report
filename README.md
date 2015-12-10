@@ -1,5 +1,5 @@
 # q-report
-Q&A communication tool for players and admins. Allows user to sends in game tickets.
+This is a modification for Minecraft based on Forge Mod Loader adds in game ticket system which would provide you a better feedback from players and helps to improve your server
 
 #For End Users
 Note: currently only 1.7.10 version of the game supported
