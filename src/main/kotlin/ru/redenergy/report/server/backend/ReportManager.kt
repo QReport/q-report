@@ -118,11 +118,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Returns list with names of users who sent messages to given ticket
      */
     private fun getParticipants(ticket: Ticket): MutableList<String>{
-        var particapants: HashSet<String> = hashSetOf()
-        for(message in ticket.messages){
-            particapants.add(message.sender)
-        }
-        return particapants.toArrayList()
+        return hashSetOf(*ticket.messages.map { it.sender }.toTypedArray()).toArrayList()
     }
 
     /**
