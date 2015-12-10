@@ -21,8 +21,9 @@ enum class TicketStatus(val translateKey: String, val color: Color) {
      */
     CLOSED("ticket.status.closed", Color(29, 232, 88));
 
-    public fun getTranslation(): String = StatCollector.translateToLocal(translateKey)
+    val translation: String
+        get() = StatCollector.translateToLocal(translateKey)
 
-    override fun toString() = getTranslation()
+    override fun toString() = translation
 
 }

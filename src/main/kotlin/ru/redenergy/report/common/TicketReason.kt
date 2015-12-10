@@ -25,9 +25,8 @@ enum class TicketReason(val translateKey: String) {
      */
     OTHER("ticket.reason.other");
 
-    public fun getKey(): String = translateKey
+    val translation: String
+        get() = StatCollector.translateToLocal(translateKey)
 
-    public fun getTranslation(): String = StatCollector.translateToLocal(translateKey)
-
-    override fun toString() = getTranslation()
+    override fun toString() = translation
 }
