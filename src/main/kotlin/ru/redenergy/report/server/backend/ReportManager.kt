@@ -114,7 +114,27 @@ class ReportManager(val connectionSource: ConnectionSource) {
     private fun isOp(player: EntityPlayerMP): Boolean = MinecraftServer.getServer().configurationManager
             .func_152603_m().func_152700_a(player.commandSenderName) != null
 
+    /**
+     * Returns list with names of users who sent messages to given ticket
+     */
+    private fun getParticipants(ticket: Ticket): MutableList<String>{
+        var particapants: HashSet<String> = hashSetOf()
+        for(message in ticket.messages){
+            particapants.add(message.sender)
+        }
+        return particapants.toArrayList()
+    }
 
+    /**
+     * Sends message to all players with the names in the list <br>
+     * If any of players is offline he won't receive message
+     */
+    private fun notifyUsers(users: MutableList<String>, message: String){
+        for(user in users){
+            var player = MinecraftServer.getServer().configurationManager.func_152612_a(user) ?: continue
+            player.addChatMessage(ChatComponentText(message))
+        }
+    }
 
     public fun handleUpdateTicketStatus(ticketUid: UUID, status: TicketStatus, player: EntityPlayerMP){
         var ticket = ticketDao.queryForId(ticketUid) ?: return
@@ -139,6 +159,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
             var ticketMessage = TicketMessage(player.commandSenderName, message)
             ticket.messages.add(ticketMessage)
             ticketDao.update(ticket)
+            notifyUsers(getParticipants(ticket).apply{remove(player.commandSenderName)},
+                    "${EnumChatFormatting.GREEN}${player.displayName} added new message to the ticket ${ticket.shortUid}")
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
