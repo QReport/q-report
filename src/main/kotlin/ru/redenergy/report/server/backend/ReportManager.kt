@@ -38,6 +38,12 @@ class ReportManager(val connectionSource: ConnectionSource) {
      */
     var ticketDao = DaoManager.createDao<Dao<Ticket, UUID>, Ticket>(connectionSource, ticketConfig)
 
+    /**
+     * Contains tickets from last database query <br>
+     * May be empty if no database queries has been performed
+     */
+    var cachedTickets: MutableList<Ticket> = arrayListOf()
+
     public fun initialize() {
         TableUtils.createTableIfNotExists(connectionSource, Ticket::class.java)
     }
@@ -53,9 +59,15 @@ class ReportManager(val connectionSource: ConnectionSource) {
     public fun deleteTicket(ticket: Ticket) = ticketDao.delete(ticket)
 
     /**
-     * Returns all tickets in database
+     * Queries all tickets from database <br>
+     * Replaces tickets cache with obtained from database <br>
+     * Returns cache
      */
-    public fun getTickets(): MutableList<Ticket> = ticketDao.queryForAll()
+    public fun getTickets(): MutableList<Ticket> {
+        cachedTickets.clear()
+        cachedTickets.addAll(ticketDao.queryForAll())
+        return cachedTickets
+    }
 
     /**
      * Returns all tickets sent by player with the given name
