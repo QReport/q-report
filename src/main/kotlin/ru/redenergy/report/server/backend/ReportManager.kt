@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
 import net.minecraft.util.EnumChatFormatting
+import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.entity.Ticket
@@ -84,10 +85,12 @@ class ReportManager(val connectionSource: ConnectionSource) {
     public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(
             Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
 
-    public fun gatherStats(){
+    public fun gatherStats(): Stats{
         val tickets = getTickets()
         val countTickets = countTickets(tickets)
         val activeUsers = getActiveUsers(tickets, 5)
+        val averageResponseTime = countAverageResponseTime(tickets)
+        return Stats(countTickets, activeUsers, averageResponseTime)
     }
 
     /**
@@ -112,6 +115,24 @@ class ReportManager(val connectionSource: ConnectionSource) {
         val sortedStats = userStats.toList().sortedBy { it.second } .reversed()
         val limiter = Math.min(amount - 1, sortedStats.size - 1)
         return mapOf(*sortedStats.toTypedArray().sliceArray(0..limiter))
+    }
+
+    /**
+     * Returns average response time between first original sender's message and first response of administrator <br>
+     * Will return -1 if no responses registered
+     */
+    public fun countAverageResponseTime(tickets: MutableList<Ticket>): Long{
+        val ticketsWithAnswer = tickets.filter { it.messages.size > 1 }
+        val lotOfResponses = ticketsWithAnswer.map { ticket ->
+            val originalSenderMessage = ticket.messages[0]
+            val administratorFirstMessage = ticket.messages.filter { it.sender != ticket.sender } [0]
+            administratorFirstMessage.timestamp - originalSenderMessage.timestamp
+        }
+        val result = lotOfResponses.sum() / Math.max(1, lotOfResponses.size)
+        if(result == 0L){
+            return -1L
+        }
+        return result
     }
 
     /**
