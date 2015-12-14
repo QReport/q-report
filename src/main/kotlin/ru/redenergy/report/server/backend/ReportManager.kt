@@ -84,6 +84,36 @@ class ReportManager(val connectionSource: ConnectionSource) {
     public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(
             Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
 
+    public fun gatherStats(){
+        val tickets = getTickets()
+        val countTickets = countTickets(tickets)
+        val activeUsers = getActiveUsers(tickets, 5)
+    }
+
+    /**
+     * Counts tickets in each category and returns map (Category (TicketReasons) : Amount of tickets (Int))
+     */
+    private fun countTickets(tickets: MutableList<Ticket>): MutableMap<TicketReason, Int>{
+        val ticketsStats = hashMapOf<TicketReason, Int>()
+        for(reason in TicketReason.values){
+            ticketsStats.put(reason, tickets.filter { it.reason.equals(reason) } .count())
+        }
+        return ticketsStats
+    }
+
+    /**
+     * Returns map with users who send most of tickets (User Name: Amount of Tickets)
+     */
+    public fun getActiveUsers(tickets: MutableList<Ticket>, amount: Int): Map<String, Int>{
+        val userList = arrayListOf(*tickets.map { it.sender } .toTypedArray())
+        val userStats = linkedMapOf(*userList.
+                map { user -> Pair(user, tickets.filter { it.sender == user } .count()) }
+                .toTypedArray())
+        val sortedStats = userStats.toList().sortedBy { it.second } .reversed()
+        val limiter = Math.min(amount - 1, sortedStats.size - 1)
+        return mapOf(*sortedStats.toTypedArray().sliceArray(0..limiter))
+    }
+
     /**
      * Returns ORM configuration for Ticket.class
      */
