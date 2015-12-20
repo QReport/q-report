@@ -106,7 +106,7 @@ task liteServerJar(type: Jar){
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         exclude 'ru/redenergy/report/client/**'
     }
-    classifier = 'server-lite'
+    classifier = 'serverlite'
 }
 
 task clientJar(type: Jar){
@@ -130,7 +130,7 @@ task liteClientJar(type: Jar){
         exclude 'ru/redenergy/report/server/**'
     }
 
-    classifier = 'client-lite'
+    classifier = 'clientlite'
 }
 
 def action = new Action<net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec>(){
@@ -138,10 +138,12 @@ def action = new Action<net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec>
         artifactSpec.classpath = sourceSets.main.compileClasspath
     }
 }
-reobf.reobf(clientJar, action)
-reobf.reobf(serverJar, action)
-reobf.reobf(liteServerJar, action)
-reobf.reobf(liteClientJar, action)
+reobf{
+    reobf(clientJar, action)
+    reobf(serverJar, action)
+    reobf(liteServerJar, action)
+    reobf(liteClientJar, action)
+}
 
 tasks.jar.dependsOn('serverJar', 'clientJar', 'liteServerJar', 'liteClientJar')
 
