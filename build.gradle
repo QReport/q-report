@@ -35,7 +35,7 @@ repositories{
     }
 }
 
-version = "0.0.2"
+version = "v1.0.0"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
 
@@ -101,6 +101,14 @@ task serverJar(type: Jar){
     classifier = 'server'
 }
 
+task liteServerJar(type: Jar){
+    from (sourceSets.main.output) {
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        exclude 'ru/redenergy/report/client/**'
+    }
+    classifier = 'server-lite'
+}
+
 task clientJar(type: Jar){
     from (sourceSets.main.output) {
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
@@ -116,6 +124,15 @@ task clientJar(type: Jar){
     classifier = 'client'
 }
 
+task liteClientJar(type: Jar){
+    from (sourceSets.main.output) {
+        setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+        exclude 'ru/redenergy/report/server/**'
+    }
+
+    classifier = 'client-lite'
+}
+
 def action = new Action<net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec>(){
     void execute(ArtifactSpec artifactSpec) {
         artifactSpec.classpath = sourceSets.main.compileClasspath
@@ -123,13 +140,17 @@ def action = new Action<net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec>
 }
 reobf.reobf(clientJar, action)
 reobf.reobf(serverJar, action)
+reobf.reobf(liteServerJar, action)
+reobf.reobf(liteClientJar, action)
 
-tasks.jar.dependsOn('serverJar', 'clientJar')
+tasks.jar.dependsOn('serverJar', 'clientJar', 'liteServerJar', 'liteClientJar')
 
 artifacts{
     jar
     serverJar
     clientJar
+    liteServerJar
+    liteClientJar
 }
 
 sourceSets {
