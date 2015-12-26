@@ -17,6 +17,7 @@ import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.entity.TicketMessage
 import ru.redenergy.report.common.network.NetworkHandler
+import ru.redenergy.report.common.network.packet.SyncStatsPackets
 import ru.redenergy.report.common.network.packet.SyncTickets
 import ru.redenergy.report.common.network.packet.UpdateAdminAccess
 import ru.redenergy.report.server.QReportServer
@@ -122,10 +123,12 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Will return -1 if no responses registered
      */
     public fun countAverageResponseTime(tickets: MutableList<Ticket>): Long{
-        val ticketsWithAnswer = tickets.filter { it.messages.size > 1 }
+        val ticketsWithAnswer = tickets.filter { ticket ->
+            ticket.messages.filter { it.sender != ticket.sender } .size >= 1
+        }
         val lotOfResponses = ticketsWithAnswer.map { ticket ->
             val originalSenderMessage = ticket.messages[0]
-            val administratorFirstMessage = ticket.messages.filter { it.sender != ticket.sender } [0]
+            val administratorFirstMessage = ticket.messages.filter { it.sender != ticket.sender } .first()
             administratorFirstMessage.timestamp - originalSenderMessage.timestamp
         }
         val result = lotOfResponses.sum() / Math.max(1, lotOfResponses.size)
@@ -206,6 +209,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
     }
 
     public fun handleSyncRequest(player: EntityPlayerMP) {
+        NetworkHandler.instance.sendTo(SyncStatsPackets(gatherStats()), player)
         NetworkHandler.instance.sendTo(UpdateAdminAccess(canAccessTicketManagement(player)), player)
         var tickets = if (canAccessTicketManagement(player)) getTickets()
                         else getTicketsByPlayer(player.commandSenderName)
