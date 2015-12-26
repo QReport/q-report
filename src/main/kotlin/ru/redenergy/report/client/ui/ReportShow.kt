@@ -26,8 +26,10 @@ class ReportShow : Show() {
                 .setId("text_box"))
         registerComponent(TextLabel(this.width / 3, this.height / 4 + this.height / 3 + 20, this.width /3, I18n.format("show.report.category")))
         registerComponent(DropDown<TicketReason>(this.width / 3 + 2, this.height / 4 + this.height / 3 + 35, this.width / 3 - 4)
-                .addAndSetDefault(TicketReason.OTHER)
-                .addAll(*TicketReason.values.filter { !it.equals(TicketReason.OTHER) }.toTypedArray())
+                .addItemAndSetDefault(TicketReason.OTHER.translation, TicketReason.OTHER)
+                .apply {
+                    TicketReason.values.filterNot {it == TicketReason.OTHER} .forEach { add(it.translation, it) }
+                }
                 .setId("reason_dropdown"))
         registerComponent(Button(this.width / 3, this.height / 3 + this.height / 4 + 60, this.width / 3 / 2 - 2, 20, I18n.format("show.report.send"))
                 .setClickListener { send() })

@@ -1,6 +1,5 @@
 package ru.redenergy.report.common
 
-import net.minecraft.client.resources.I18n
 import net.minecraft.util.StatCollector
 
 /**
@@ -28,5 +27,4 @@ enum class TicketReason(val translateKey: String) {
     val translation: String
         get() = StatCollector.translateToLocal(translateKey)
 
-    override fun toString() = translation
 }
