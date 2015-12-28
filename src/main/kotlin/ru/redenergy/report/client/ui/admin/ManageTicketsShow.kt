@@ -1,7 +1,6 @@
 package ru.redenergy.report.client.ui.admin
 
 import com.rabbit.gui.component.control.DropDown
-import net.minecraft.client.Minecraft
 import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.TicketStatus
@@ -27,7 +26,7 @@ class ManageTicketsShow: TicketsListShow(){
 
     fun changeStatus(){
         val ticket = this.selectedTicket ?: return
-        var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown") as DropDown<TicketStatus>
+        var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown")
         var updatedStatus = dropdown.selectedElement.value
         NetworkHandler.instance.sendToServer(ChangeTicketStatus(ticket.uid, updatedStatus))
         NetworkHandler.instance.sendToServer(RequestSyncPacket())
@@ -42,7 +41,7 @@ class ManageTicketsShow: TicketsListShow(){
     override fun updateInformation() {
         super.updateInformation()
         this.selectedTicket?.apply{
-            var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown") as DropDown<TicketStatus>
+            var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown")
             dropdown.apply {
                 setIsEnabled(true)
                 setIsVisible(true)
