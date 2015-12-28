@@ -62,7 +62,7 @@ dependencies {
     kotlin 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
 //    kotlin 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
 
-    client 'com.github.FRedEnergy:rabbit-gui:v1.2.1:shaded'
+    client 'com.github.FRedEnergy:rabbit-gui:v1.3.0:shaded'
 
     server 'com.github.FRedEnergy:forge-vault:c2d5527281'
     server 'com.j256.ormlite:ormlite-core:4.48'
