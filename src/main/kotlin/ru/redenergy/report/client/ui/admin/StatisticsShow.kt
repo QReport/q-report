@@ -1,6 +1,7 @@
 package ru.redenergy.report.client.ui.admin
 
 import com.rabbit.gui.background.DefaultBackground
+import com.rabbit.gui.component.control.Button
 import com.rabbit.gui.component.control.MultiTextbox
 import com.rabbit.gui.component.display.Shape
 import com.rabbit.gui.component.display.ShapeType
@@ -29,7 +30,7 @@ class StatisticsShow: Show() {
                 .setIsEnabled(false))
         updateActiveUsersLabel()
 
-        registerComponent(PieChart(this.width / 3 + this.width / 20, this.height / 2 + this.height / 10, this.width / 8,
+        registerComponent(PieChart(this.width / 3 + this.width / 20, this.height / 2 + this.height / 10, (this.width / 7 + this.height / 5) / 2,
                 QReportClient.syncedStats.tickets.values.map { it.toDouble() } .toDoubleArray(),
                 QReportClient.syncedStats.tickets.values.toList().map { it.toString() }.toTypedArray()))
 
@@ -48,6 +49,8 @@ class StatisticsShow: Show() {
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 12, 200, 20, " - " + colorTitles[1]))
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 8, 200, 20, " - " + colorTitles[2]))
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 6, 200, 20, " - " + colorTitles[3]))
+
+        registerComponent(Button(this.width / 3, this.height / 10 * 9, this.width / 3, 20, "Back"))
 
     }
 
