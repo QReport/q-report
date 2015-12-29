@@ -203,8 +203,10 @@ class ReportManager(val connectionSource: ConnectionSource) {
         if(canAccessTicket(ticket, player)) {
             ticket.status = status
             ticketDao.update(ticket)
-            notifyUsers(getParticipants(ticket).apply{remove(player.commandSenderName)},
-                    "${EnumChatFormatting.GOLD}${player.displayName} changed status of ticket ${ticket.shortUid} to \"${ticket.status}\"")
+            if(QReportServer.notifications) {
+                notifyUsers(getParticipants(ticket).apply { remove(player.commandSenderName) },
+                        "${EnumChatFormatting.GOLD}${player.displayName} changed status of ticket ${ticket.shortUid} to \"${ticket.status}\"")
+            }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
@@ -224,8 +226,10 @@ class ReportManager(val connectionSource: ConnectionSource) {
             var ticketMessage = TicketMessage(player.commandSenderName, message)
             ticket.messages.add(ticketMessage)
             ticketDao.update(ticket)
-            notifyUsers(getParticipants(ticket).apply{remove(player.commandSenderName)},
-                    "${EnumChatFormatting.GOLD}${player.displayName} added new message to the ticket ${ticket.shortUid}")
+            if(QReportServer.notifications) {
+                notifyUsers(getParticipants(ticket).apply { remove(player.commandSenderName) },
+                        "${EnumChatFormatting.GOLD}${player.displayName} added new message to the ticket ${ticket.shortUid}")
+            }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
