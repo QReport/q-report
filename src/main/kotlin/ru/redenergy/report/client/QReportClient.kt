@@ -8,6 +8,7 @@ import org.lwjgl.input.Keyboard
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.SupportShow
 import ru.redenergy.report.common.Stats
+import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.*
@@ -22,7 +23,7 @@ object QReportClient {
     /**
      * Contains statistics which have been received from server
      */
-    public var syncedStats: Stats = Stats(mapOf(), mapOf(), -1L)
+    public var syncedStats: Stats = Stats(mapOf(TicketReason.BUG to 0, TicketReason.OTHER to 0, TicketReason.GRIEFING to 0, TicketReason.OTHER to 0), mapOf(), -1L)
     /**
      * Shows if current player can manage user requests, if set to true 'admin' button will be available
      */
