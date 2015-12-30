@@ -29,5 +29,17 @@ show.tickets.box.title=Информация:
 show.tickets.select=Выберите заявку...
 show.tickets.label.title=Добавить сообшение:
 show.tickets.send=Отправить
-show.tickets.reason=Категория: 
+show.tickets.reason=Категория:
 show.tickets.status=Статус:
+
+##admin center
+show.admin.title=Панель администратора
+show.admin.tickets=Управление заявками
+show.admin.back=Назад
+
+##stats
+show.stats.title=Статистика
+show.stats.back=Назад
+show.stats.avgtime=Среднее время ответа - %s ч.
+show.stats.activeusers=Активные пользователи:
+show.stats.activeusers.entry=%s - %s тикетов
