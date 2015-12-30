@@ -31,3 +31,15 @@ show.tickets.label.title=Add message:
 show.tickets.send=Send
 show.tickets.reason=Reason:
 show.tickets.status=Status:
+
+##admin center
+show.admin.title=Admin center
+show.admin.tickets=Manage tickets
+show.admin.back=Back
+
+##stats
+show.stats.title=Statistics
+show.stats.back=Back
+show.stats.avgtime=Average response time - %s hours
+show.stats.activeusers=Active users:
+show.stats.activeusers.entry=%s - %s tickets

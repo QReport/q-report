@@ -9,6 +9,7 @@ import com.rabbit.gui.component.display.TextLabel
 import com.rabbit.gui.component.display.graph.PieChart
 import com.rabbit.gui.render.TextAlignment
 import com.rabbit.gui.show.Show
+import net.minecraft.client.resources.I18n
 import org.apache.commons.lang3.time.DurationFormatUtils
 import ru.redenergy.report.client.QReportClient
 import java.awt.Color
@@ -21,8 +22,8 @@ class StatisticsShow: Show() {
 
     override fun setup() {
         super.setup()
-        registerComponent(TextLabel(this.width / 3, this.height / 5, this.width / 3, 20, "Statistics", TextAlignment.CENTER))
-        registerComponent(TextLabel(this.width / 3 + this.width / 20, this.height / 3, this.width / 3, 20, "Average response time - ${formatAverageResponseTime()} hours"))
+        registerComponent(TextLabel(this.width / 3, this.height / 5, this.width / 3, 20, I18n.format("show.stats.title"), TextAlignment.CENTER))
+        registerComponent(TextLabel(this.width / 3 + this.width / 20, this.height / 3, this.width / 3, 20, I18n.format("show.stats.avgtime", formatAverageResponseTime())))
 
         registerComponent(MultiTextbox(this.width / 3 + this.width / 20 - 5, this.height / 3 + 30, this.width / 3, this.height / 7)
                 .setId("active_users")
@@ -50,7 +51,7 @@ class StatisticsShow: Show() {
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 8, 200, 20, " - " + colorTitles[2]))
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 6, 200, 20, " - " + colorTitles[3]))
 
-        registerComponent(Button(this.width / 3, this.height / 10 * 9, this.width / 3, 20, "Back"))
+        registerComponent(Button(this.width / 3, this.height / 10 * 9, this.width / 3, 20, I18n.format("show.stats.back")))
 
     }
 
@@ -59,9 +60,9 @@ class StatisticsShow: Show() {
     fun updateActiveUsersLabel(){
         val output = StringBuilder()
         with(output){
-            append("Active users: \n")
+            append("${I18n.format("show.stats.activeusers")} \n")
             QReportClient.syncedStats.activeUsers.forEach {
-                append("${it.key} - ${it.value} tickets\n")
+                append("${I18n.format("show.stats.activeusers.entry", it.key, it.value)}\n")
             }
         }
         findComponentById<MultiTextbox>("active_users").setText(output.toString())
