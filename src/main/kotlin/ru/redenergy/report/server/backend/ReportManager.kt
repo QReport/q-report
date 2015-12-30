@@ -10,7 +10,9 @@ import com.j256.ormlite.table.TableUtils
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.ChatComponentText
+import net.minecraft.util.ChatComponentTranslation
 import net.minecraft.util.EnumChatFormatting
+import net.minecraft.util.IChatComponent
 import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
@@ -191,10 +193,10 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Sends message to all players with the names in the list <br>
      * If any of players is offline he won't receive message
      */
-    private fun notifyUsers(users: MutableList<String>, message: String){
+    private fun notifyUsers(users: MutableList<String>, message: IChatComponent){
         for(user in users){
             var player = MinecraftServer.getServer().configurationManager.func_152612_a(user) ?: continue
-            player.addChatMessage(ChatComponentText(message))
+            player.addChatMessage(message)
         }
     }
 
@@ -205,7 +207,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticketDao.update(ticket)
             if(QReportServer.notifications) {
                 notifyUsers(getParticipants(ticket).apply { remove(player.commandSenderName) },
-                        "${EnumChatFormatting.GOLD}${player.displayName} changed status of ticket ${ticket.shortUid} to \"${ticket.status}\"")
+                        ChatComponentTranslation("chat.messages.update.status", player.displayName, ticket.shortUid, ticket.status)
+                                .apply { chatStyle.setColor(EnumChatFormatting.GOLD) })
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
@@ -233,7 +236,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticketDao.update(ticket)
             if(QReportServer.notifications) {
                 notifyUsers(getParticipants(ticket).apply { remove(player.commandSenderName) },
-                        "${EnumChatFormatting.GOLD}${player.displayName} added new message to the ticket ${ticket.shortUid}")
+                        ChatComponentTranslation("chat.messages.add.message", player.displayName, ticket.shortUid)
+                                .apply { chatStyle.setColor(EnumChatFormatting.GOLD) })
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))

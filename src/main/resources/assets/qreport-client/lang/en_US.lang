@@ -47,3 +47,7 @@ show.stats.activeusers=Active users:
 ticket.one=ticket
 ticket.few=tickets
 ticket.many=tickets
+
+#chat messsages
+chat.messages.update.status=%s changed status of ticket %s to "%s"
+chat.messages.add.message=%s added new message to the ticket %s

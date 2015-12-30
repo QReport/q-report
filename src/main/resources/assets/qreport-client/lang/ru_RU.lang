@@ -47,3 +47,7 @@ show.stats.activeusers=Активные пользователи:
 ticket.one=тикет
 ticket.few=тикета
 ticket.many=тикетов
+
+#chat messsages
+chat.messages.update.status=%s изменил статус тикета %s на "%s"
+chat.messages.add.message=%s добавил новое сообщение в тикет %s
