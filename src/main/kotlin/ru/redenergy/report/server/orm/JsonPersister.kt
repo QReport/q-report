@@ -14,7 +14,7 @@ val classes = arrayOf(java.util.List::class.java)
 /**
  * Custom ORMLite persister to convert java objects into json sql object <br>
  */
-open class JsonPersister(): StringType(SqlType.STRING, classes) {
+open class JsonPersister(): StringType(SqlType.LONG_STRING, classes) {
 
     override fun javaToSqlArg(fieldType: FieldType, obj: Any): Any? {
         return toJson(fieldType, obj)
