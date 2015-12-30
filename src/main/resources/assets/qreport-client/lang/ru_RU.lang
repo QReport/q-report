@@ -42,4 +42,8 @@ show.stats.title=Статистика
 show.stats.back=Назад
 show.stats.avgtime=Среднее время ответа - %s ч.
 show.stats.activeusers=Активные пользователи:
-show.stats.activeusers.entry=%s - %s тикетов
+
+#declension
+ticket.one=тикет
+ticket.few=тикета
+ticket.many=тикетов

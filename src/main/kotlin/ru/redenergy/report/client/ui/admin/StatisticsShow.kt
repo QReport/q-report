@@ -62,11 +62,21 @@ class StatisticsShow: Show() {
         with(output){
             append("${I18n.format("show.stats.activeusers")} \n")
             QReportClient.syncedStats.activeUsers.forEach {
-                append("${I18n.format("show.stats.activeusers.entry", it.key, it.value)}\n")
+                append("${it.key} - ${it.value} ${declensionTicketsLocales(it.value)}\n")
             }
         }
         findComponentById<MultiTextbox>("active_users").setText(output.toString())
     }
 
+    fun declensionTicketsLocales(amount: Int): String{
+        val remainder = amount % 10
+        val secondRemainder = (remainder / 10) % 10
+        if((remainder == 1) && (secondRemainder != 1))
+            return I18n.format("ticket.one")
+        else if ((remainder >= 2) && (remainder <= 4) && (secondRemainder != 1))
+            return I18n.format("ticket.few")
+        else
+            return I18n.format("ticket.many")
+    }
 
 }
