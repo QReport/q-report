@@ -23,7 +23,10 @@ class StatisticsShow: Show() {
     override fun setup() {
         super.setup()
         registerComponent(TextLabel(this.width / 3, this.height / 5, this.width / 3, 20, I18n.format("show.stats.title"), TextAlignment.CENTER))
-        registerComponent(TextLabel(this.width / 3 + this.width / 20, this.height / 3, this.width / 3, 20, I18n.format("show.stats.avgtime", formatAverageResponseTime())))
+
+        val avgTime = if(QReportClient.syncedStats.averageTime == -1L) I18n.format("show.stats.unknown")
+                        else formatAverageResponseTime()
+        registerComponent(TextLabel(this.width / 3 + this.width / 20, this.height / 3, this.width / 3, 20, I18n.format("show.stats.avgtime", avgTime)))
 
         registerComponent(MultiTextbox(this.width / 3 + this.width / 20 - 5, this.height / 3 + 30, this.width / 3, this.height / 7)
                 .setId("active_users")
@@ -31,8 +34,11 @@ class StatisticsShow: Show() {
                 .setIsEnabled(false))
         updateActiveUsersLabel()
 
+        val data = if(QReportClient.syncedStats.tickets.values.sum() == 0) doubleArrayOf(1.0, 1.0, 1.0, 1.0)
+                        else QReportClient.syncedStats.tickets.values.map { it.toDouble() } .toDoubleArray()
+
         registerComponent(PieChart(this.width / 3 + this.width / 20, this.height / 2 + this.height / 10, (this.width / 7 + this.height / 5) / 2,
-                QReportClient.syncedStats.tickets.values.map { it.toDouble() } .toDoubleArray(),
+                data,
                 QReportClient.syncedStats.tickets.values.toList().map { it.toString() }.toTypedArray()))
 
         val colorLabelsX = this.width / 2 + 25
@@ -51,7 +57,8 @@ class StatisticsShow: Show() {
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 8, 200, 20, " - " + colorTitles[2]))
         registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 6, 200, 20, " - " + colorTitles[3]))
 
-        registerComponent(Button(this.width / 3, this.height / 10 * 9, this.width / 3, 20, I18n.format("show.stats.back")))
+        registerComponent(Button(this.width / 3, this.height / 10 * 9, this.width / 3, 20, I18n.format("show.stats.back"))
+                            .setClickListener { this.getStage().displayPrevious() })
 
     }
 
@@ -60,9 +67,11 @@ class StatisticsShow: Show() {
     fun updateActiveUsersLabel(){
         val output = StringBuilder()
         with(output){
-            append("${I18n.format("show.stats.activeusers")} \n")
-            QReportClient.syncedStats.activeUsers.forEach {
-                append("${it.key} - ${it.value} ${declensionTicketsLocales(it.value)}\n")
+            if(QReportClient.syncedStats.activeUsers.size > 0) {
+                append("${I18n.format("show.stats.activeusers")} \n")
+                QReportClient.syncedStats.activeUsers.forEach {
+                    append("${it.key} - ${it.value} ${declensionTicketsLocales(it.value)}\n")
+                }
             }
         }
         findComponentById<MultiTextbox>("active_users").setText(output.toString())

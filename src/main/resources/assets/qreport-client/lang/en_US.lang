@@ -42,6 +42,7 @@ show.stats.title=Statistics
 show.stats.back=Back
 show.stats.avgtime=Average response time - %s hours
 show.stats.activeusers=Active users:
+show.stats.unknown=unknown
 
 #declension
 ticket.one=ticket
