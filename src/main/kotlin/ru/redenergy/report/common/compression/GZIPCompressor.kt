@@ -22,7 +22,7 @@ object GZIPCompressor{
      * Decompress gzip byte array to string
      */
     fun decompress(data: ByteArray): String {
-        var reader = InputStreamReader(GZIPInputStream(ByteArrayInputStream(data)))
+        var reader = InputStreamReader(GZIPInputStream(ByteArrayInputStream(data)), Charsets.UTF_8)
         var builder = StringBuilder()
         reader.buffered().forEachLine {
             builder.append(it)
