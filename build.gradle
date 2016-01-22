@@ -47,11 +47,14 @@ minecraft {
 
 
 configurations {
+    commonShade
     common
     client
     server
     shade
 
+    client.extendsFrom commonShade
+    server.extendsFrom commonShade
     shade.extendsFrom(client, server)
     compile.extendsFrom shade, common
 }
@@ -64,7 +67,8 @@ dependencies {
     common 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
     common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-beta-2423'
     common 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
-    common 'com.github.QReport:q-report-common:-SNAPSHOT'
+
+    commonShade 'com.github.QReport:q-report-common:-SNAPSHOT'
 
     client 'com.github.FRedEnergy:rabbit-gui:v1.3.0:shaded'
 
