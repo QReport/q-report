@@ -45,7 +45,7 @@ class StatisticsShow: Show() {
         val colorLabelsY = this.width / 18 + this.height / 2;
         val colorShapeWidth = this.width / 60
         val colorShapeHeight = this.height / 50
-        val colorTitles = QReportClient.syncedStats.tickets.keys.toList().map { it.translation }
+        val colorTitles = QReportClient.syncedStats.tickets.keys.toList().map { I18n.format(it.translateKey) }
 
         registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 25, colorShapeWidth, colorShapeHeight, ShapeType.RECT, Color.BLUE))
         registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 12, colorShapeWidth, colorShapeHeight, ShapeType.RECT, Color.RED))

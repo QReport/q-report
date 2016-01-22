@@ -47,20 +47,24 @@ minecraft {
 
 
 configurations {
-    kotlin
+    common
     client
     server
     shade
 
     shade.extendsFrom(client, server)
-    compile.extendsFrom shade, kotlin
+    compile.extendsFrom shade, common
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' //update dependencies on every build
 }
 
 dependencies {
-    kotlin 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
-    kotlin 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-beta-2423'
-    kotlin 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
-//    kotlin 'org.jetbrains.kotlin:kotlin-reflect:1.0.0-beta-2423'
+    common 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
+    common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-beta-2423'
+    common 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
+    common 'com.github.QReport:q-report-common:-SNAPSHOT'
 
     client 'com.github.FRedEnergy:rabbit-gui:v1.3.0:shaded'
 

@@ -138,8 +138,9 @@ open class TicketsListShow : Show() {
        override fun onDraw(list: DisplayList?, posX: Int, posY: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) {
            TextRenderer.renderString(posX + 5, posY + 5, ticket.sender)
            TextRenderer.renderString(posX + 5, posY + 15, ticket.shortUid)
-           TextRenderer.renderString(posX + 5, posY + 25, I18n.format("show.tickets.reason") + " " + ticket.reason.translation)
-           TextRenderer.renderString(posX + 5, posY + 35, "${EnumChatFormatting.WHITE}${I18n.format("show.tickets.status")} ${EnumChatFormatting.RESET}" + ticket.status.translation, ticket.status.color)
+           TextRenderer.renderString(posX + 5, posY + 25, I18n.format("show.tickets.reason") + " " + I18n.format(ticket.reason.translateKey))
+           TextRenderer.renderString(posX + 5, posY + 35,
+                   "${EnumChatFormatting.WHITE}${I18n.format("show.tickets.status")} ${EnumChatFormatting.RESET}" + I18n.format(ticket.status.translateKey), ticket.status.color)
        }
    }
 
