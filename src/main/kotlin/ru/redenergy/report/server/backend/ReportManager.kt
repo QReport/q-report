@@ -85,8 +85,11 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * @param reason - reason of a ticket
      * @param sender - name of a sender
      */
-    public fun newTicket(text: String, reason: TicketReason, sender: String) = addTicket(
-            Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text))))
+    public fun newTicket(text: String, reason: TicketReason, sender: String): Ticket {
+        val ticket = Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text)))
+        addTicket(ticket)
+        return ticket
+    }
 
     public fun gatherStats(): Stats{
         val tickets = getTickets()
