@@ -6,9 +6,9 @@ Note: currently only 1.7.10 version of the game supported
 
 1. Install Forgelin mod for 1.7.10 (you can get it [here](https://github.com/FRedEnergy/Forgelin/releases/tag/v0.1.0))
 2. Download q-report mod. There are different versions available:
-  * [qreport-client](https://github.com/FRedEnergy/q-report/releases/download/v1.1.0/qreport-v1.1.0-client.jar) - lightweight version for client, without unnecessary server dependencies. Won't work in single player
-  * [qreport-server](https://github.com/FRedEnergy/q-report/releases/download/v1.1.0/qreport-v1.1.0-server.jar) - server side version, without client part
-  * [qreport-standalone](https://github.com/FRedEnergy/q-report/releases/download/v1.1.0/qreport-v1.1.0-standalone.jar) - full version, it is not recommended to put on the server
+  * [qreport-client](https://github.com/FRedEnergy/q-report/releases/download/v1.1.1/qreport-v1.1.1-client.jar) - lightweight version for client, without unnecessary server dependencies. Won't work in single player
+  * [qreport-server](https://github.com/FRedEnergy/q-report/releases/download/v1.1.1/qreport-v1.1.1-server.jar) - server side version, without client part
+  * [qreport-standalone](https://github.com/FRedEnergy/q-report/releases/download/v1.1.1/qreport-v1.1.1-standalone.jar) - full version, it is not recommended to put on the server
 3. If installing mod on server you also must download bukkit plugin [Vault](http://dev.bukkit.org/bukkit-plugins/vault/files/47-vault-1-4-1/)
 4. Do not forget to configure mod (config usually can be found in `<game or server directory>/config/qreport-server.cfg`
   
