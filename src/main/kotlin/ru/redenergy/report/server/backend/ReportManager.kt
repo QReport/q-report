@@ -86,7 +86,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * @param sender - name of a sender
      */
     public fun newTicket(text: String, reason: TicketReason, sender: String): Ticket {
-        val ticket = Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text)))
+        val ticket = Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason,
+                messages = arrayListOf(TicketMessage(sender, text)), server = QReportServer.server)
         addTicket(ticket)
         return ticket
     }
@@ -151,6 +152,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
             add(DatabaseFieldConfig("uid").apply { isId = true })
             add(DatabaseFieldConfig("status"))
             add(DatabaseFieldConfig("sender"))
+            add(DatabaseFieldConfig("server"))
             add(DatabaseFieldConfig("reason"))
             add(DatabaseFieldConfig("messages").apply { persisterClass = JsonPersister::class.java })
         }).apply { tableName = "tickets" }
