@@ -68,7 +68,7 @@ dependencies {
     common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-beta-2423'
     common 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
 
-    commonShade 'com.github.QReport:q-report-common:-SNAPSHOT'
+    commonShade 'com.github.QReport:q-report-common:v1.2.0-SNAPSHOT'
 
     client 'com.github.FRedEnergy:rabbit-gui:v1.3.0:shaded'
 
