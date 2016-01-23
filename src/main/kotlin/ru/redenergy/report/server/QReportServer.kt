@@ -20,6 +20,7 @@ object QReportServer {
     var jdbcLogin = " "
     var jdbcPassword = " "
     var notifications = true
+    var server = "unknown"
 
     @Mod.EventHandler
     public fun preInit(event: FMLPreInitializationEvent){
@@ -40,6 +41,7 @@ object QReportServer {
         this.checkPermission = config.getBoolean("check-permission", "QReport Permission", checkPermission, "If enabled - access to ticket management would be given only to users with specified permission node")
         this.permissionNode = config.getString("permission", "QReport Permission", permissionNode, "Permission node required to manage tickets (make sure you enabled 'check-permission')")
         this.notifications = config.getBoolean("notifications", "QReport", notifications, "Enables notification for users when somebody adds new message or updates ticket status")
+        this.server = config.getString("server", "QReport", server, "Identifier of current server, used when there is more than 1 server in one database")
     }
 
     @Mod.EventHandler
