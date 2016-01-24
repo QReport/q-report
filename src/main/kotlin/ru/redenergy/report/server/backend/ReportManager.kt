@@ -103,7 +103,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
     /**
      * Counts tickets in each category and returns map (Category (TicketReasons) : Amount of tickets (Int))
      */
-    private fun countTickets(tickets: MutableList<Ticket>): MutableMap<TicketReason, Int>{
+    public fun countTickets(tickets: MutableList<Ticket>): MutableMap<TicketReason, Int>{
         val ticketsStats = hashMapOf<TicketReason, Int>()
         for(reason in TicketReason.values){
             ticketsStats.put(reason, tickets.filter { it.reason.equals(reason) } .count())

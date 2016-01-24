@@ -30,6 +30,24 @@ class ReportManagerTest {
     }
 
     @Test
+    fun testCountTickets(){
+        val tickets = arrayListOf<Ticket>()
+
+        for((amount, reason) in TicketReason.values.withIndex()){
+            for(index in 0..amount){
+                tickets.add(Ticket(UUID.randomUUID(), TicketStatus.OPEN, "user", reason, arrayListOf(TicketMessage("user", "text"))))
+            }
+        }
+
+        val result = reportManager.countTickets(tickets)
+        assertEquals(result[TicketReason.BUG], 1)
+        assertEquals(result[TicketReason.GRIEFING], 2)
+        assertEquals(result[TicketReason.SUGGESTION], 3)
+        assertEquals(result[TicketReason.OTHER], 4)
+
+    }
+
+    @Test
     fun testGetActiveUsers(){
         val tickets = arrayListOf<Ticket>();
 
