@@ -9,15 +9,15 @@ import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.common.network.AbstractPacket
 import java.util.*
 
-class AddMessagePacket(var ticketUid: UUID, var message: String) : AbstractPacket {
+class AddMessagePacket(var ticketUid: Int, var message: String) : AbstractPacket {
 
     override fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        ByteBufUtils.writeUTF8String(buf, ticketUid.toString())
+        buf.writeInt(ticketUid)
         ByteBufUtils.writeUTF8String(buf, message)
     }
 
     override fun decodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        this.ticketUid = UUID.fromString(ByteBufUtils.readUTF8String(buf))
+        this.ticketUid = buf.readInt()
         this.message = ByteBufUtils.readUTF8String(buf)
     }
 

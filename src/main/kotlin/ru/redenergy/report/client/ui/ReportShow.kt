@@ -28,7 +28,7 @@ class ReportShow : Show() {
         registerComponent(DropDown<TicketReason>(this.width / 3 + 2, this.height / 4 + this.height / 3 + 35, this.width / 3 - 4)
                 .addItemAndSetDefault(I18n.format(TicketReason.OTHER.translateKey), TicketReason.OTHER)
                 .apply {
-                    TicketReason.values.filterNot {it == TicketReason.OTHER} .forEach { add(I18n.format(it.translateKey), it) }
+                    TicketReason.values().filterNot {it == TicketReason.OTHER} .forEach { add(I18n.format(it.translateKey), it) }
                 }
                 .setId("reason_dropdown"))
         registerComponent(Button(this.width / 3, this.height / 3 + this.height / 4 + 60, this.width / 3 / 2 - 2, 20, I18n.format("show.report.send"))
