@@ -25,7 +25,7 @@ import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.server.orm.JsonPersister
 import ru.redenergy.vault.ForgeVault
 
-class ReportManager(val connectionSource: ConnectionSource) {
+public class ReportManager(val connectionSource: ConnectionSource) {
 
     init{
         DataPersisterManager.registerDataPersisters(JsonPersister.getSingleton())
@@ -145,7 +145,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Returns list with names of users who sent messages to given ticket
      */
     private fun getParticipants(ticket: Ticket): MutableList<String>{
-        return hashSetOf(*ticket.messages.map { it.sender }.toTypedArray()).toArrayList()
+        return hashSetOf(*ticket.messages.map { it.sender }.toTypedArray()).toMutableList()
     }
 
     /**

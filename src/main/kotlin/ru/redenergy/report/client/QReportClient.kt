@@ -13,7 +13,7 @@ import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.*
 
-@Mod(modid = "qreport-client", name = "QReport Client", modLanguageAdapter = "io.drakon.forgelin.KotlinAdapter")
+@Mod(modid = "qreport-client", name = "QReport Client", modLanguageAdapter = "io.drakon.forge.kotlin.KotlinAdapter")
 object QReportClient {
 
     /**

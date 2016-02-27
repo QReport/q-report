@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-rc-1036'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0'
     }
 }
 
@@ -64,13 +64,15 @@ configurations.all {
 }
 
 dependencies {
-    common 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-rc-1036'
-    common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-rc-1036'
-    common 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
+    common 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0'
+    common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0'
+    common ('com.github.QReport:Forgelin:-SNAPSHOT') {
+        transitive = false
+    }
 
     commonShade 'com.github.QReport:q-report-common:v1.2.0-SNAPSHOT'
 
-    client 'com.github.FRedEnergy:rabbit-gui:v1.3.0:shaded'
+    client 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT:shaded'
 
     server 'com.github.FRedEnergy:forge-vault:c2d5527281'
     server 'com.j256.ormlite:ormlite-core:4.48'
