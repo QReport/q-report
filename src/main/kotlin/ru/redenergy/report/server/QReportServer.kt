@@ -4,17 +4,19 @@ import com.j256.ormlite.jdbc.JdbcConnectionSource
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
+import io.drakon.forge.kotlin.KotlinAdapter
 import net.minecraftforge.common.config.Configuration
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.*
 import ru.redenergy.report.server.backend.ReportManager
 import java.io.File
 
+
 @Mod(modid = "qreport-server", name = "QReport Server", acceptableRemoteVersions = "*", modLanguageAdapter = "io.drakon.forge.kotlin.KotlinAdapter")
 object QReportServer {
 
     lateinit var ticketManager: ReportManager
-    var jdbcPath = "jdbc:sqlite:${File("").absolutePath}\\reports.sqlite"
+    var jdbcPath = "jdbc:sqlite:${File("").absolutePath}${File.separator}reports.sqlite"
     var checkPermission = false
     var permissionNode = "qreport.tickets.access"
     var jdbcLogin = " "

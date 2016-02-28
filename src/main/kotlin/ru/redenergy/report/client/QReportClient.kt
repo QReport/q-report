@@ -4,6 +4,7 @@ import com.rabbit.gui.GuiFoundation
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
+import org.bukkit.inventory.Inventory
 import org.lwjgl.input.Keyboard
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.SupportShow
