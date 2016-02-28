@@ -10,14 +10,15 @@ import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.network.AbstractPacket
 import java.util.*
 
-class ChangeTicketStatus(var ticketUid: UUID, var status: TicketStatus): AbstractPacket {
+class ChangeTicketStatus(var ticketUid: Int, var status: TicketStatus): AbstractPacket {
+
     override fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        ByteBufUtils.writeUTF8String(buf, ticketUid.toString())
+        buf.writeInt(ticketUid)
         ByteBufUtils.writeUTF8String(buf, status.name)
     }
 
     override fun decodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
-        this.ticketUid = UUID.fromString(ByteBufUtils.readUTF8String(buf))
+        this.ticketUid = buf.readInt()
         this.status = TicketStatus.valueOf(ByteBufUtils.readUTF8String(buf))
     }
 

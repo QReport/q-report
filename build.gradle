@@ -14,7 +14,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-beta-2423'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0'
     }
 }
 
@@ -35,7 +35,7 @@ repositories{
     }
 }
 
-version = "v1.1.1"
+version = "v1.2.0"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
 
@@ -64,13 +64,15 @@ configurations.all {
 }
 
 dependencies {
-    common 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-2423'
-    common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0-beta-2423'
-    common 'com.github.FRedEnergy:Forgelin:-SNAPSHOT'
+    commonShade 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0'
+    commonShade 'org.jetbrains.kotlin:kotlin-runtime:1.0.0'
+    common ('com.github.QReport:Forgelin:-SNAPSHOT') {
+        transitive = false
+    }
 
-    commonShade 'com.github.QReport:q-report-common:-SNAPSHOT'
+    commonShade 'com.github.QReport:q-report-common:v1.2.0-SNAPSHOT'
 
-    client 'com.github.FRedEnergy:rabbit-gui:v1.3.0:shaded'
+    client 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT:shaded'
 
     server 'com.github.FRedEnergy:forge-vault:c2d5527281'
     server 'com.j256.ormlite:ormlite-core:4.48'
@@ -83,7 +85,7 @@ dependencies {
 
 jar {
     configurations.shade.each{ dep ->
-        if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
+        if(!dep.getName().contains("bukkit")) {
             from(project.zipTree(dep)) {
                 exclude 'META-ING', 'META-INF/**'
             }
@@ -100,7 +102,7 @@ task serverJar(type: Jar){
         exclude 'ru/redenergy/report/client/**'
     }
     configurations.server.each{ dep ->
-        if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
+        if(!dep.getName().contains("bukkit")) {
             from(project.zipTree(dep)) {
                 exclude 'META-ING', 'META-INF/**'
             }

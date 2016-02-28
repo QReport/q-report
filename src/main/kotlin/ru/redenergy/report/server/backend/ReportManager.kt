@@ -16,8 +16,7 @@ import net.minecraft.util.IChatComponent
 import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
-import ru.redenergy.report.common.entity.Ticket
-import ru.redenergy.report.common.entity.TicketMessage
+import ru.redenergy.report.common.entity.*
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.SyncStatsPackets
 import ru.redenergy.report.common.network.packet.SyncTickets
@@ -25,9 +24,8 @@ import ru.redenergy.report.common.network.packet.UpdateAdminAccess
 import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.server.orm.JsonPersister
 import ru.redenergy.vault.ForgeVault
-import java.util.*
 
-class ReportManager(val connectionSource: ConnectionSource) {
+public class ReportManager(val connectionSource: ConnectionSource) {
 
     init{
         DataPersisterManager.registerDataPersisters(JsonPersister.getSingleton())
@@ -40,7 +38,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
     /**
      * ORM Dao for Ticket.class
      */
-    var ticketDao = DaoManager.createDao<Dao<Ticket, UUID>, Ticket>(connectionSource, ticketConfig)
+    var ticketDao = DaoManager.createDao<Dao<Ticket, Int>, Ticket>(connectionSource, ticketConfig)
 
     /**
      * Contains tickets from last database query <br>
@@ -86,61 +84,18 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * @param sender - name of a sender
      */
     public fun newTicket(text: String, reason: TicketReason, sender: String): Ticket {
-        val ticket = Ticket(status = TicketStatus.OPEN, sender = sender, reason = reason, messages = arrayListOf(TicketMessage(sender, text)))
+        val ticket = Ticket(-1, status = TicketStatus.OPEN, sender = sender, reason = reason,
+                messages = arrayListOf(TicketMessage(sender, text)), server = QReportServer.server)
         addTicket(ticket)
         return ticket
     }
 
     public fun gatherStats(): Stats{
         val tickets = getTickets()
-        val countTickets = countTickets(tickets)
-        val activeUsers = getActiveUsers(tickets, 5)
-        val averageResponseTime = countAverageResponseTime(tickets)
-        return Stats(countTickets, activeUsers, averageResponseTime)
-    }
-
-    /**
-     * Counts tickets in each category and returns map (Category (TicketReasons) : Amount of tickets (Int))
-     */
-    private fun countTickets(tickets: MutableList<Ticket>): MutableMap<TicketReason, Int>{
-        val ticketsStats = hashMapOf<TicketReason, Int>()
-        for(reason in TicketReason.values){
-            ticketsStats.put(reason, tickets.filter { it.reason.equals(reason) } .count())
-        }
-        return ticketsStats
-    }
-
-    /**
-     * Returns map with users who send most of tickets (User Name: Amount of Tickets)
-     */
-    public fun getActiveUsers(tickets: MutableList<Ticket>, amount: Int): Map<String, Int>{
-        val userList = arrayListOf(*tickets.map { it.sender } .toTypedArray())
-        val userStats = linkedMapOf(*userList.
-                map { user -> Pair(user, tickets.filter { it.sender == user } .count()) }
-                .toTypedArray())
-        val sortedStats = userStats.toList().sortedBy { it.second } .reversed()
-        val limiter = Math.min(amount - 1, sortedStats.size - 1)
-        return mapOf(*sortedStats.toTypedArray().sliceArray(0..limiter))
-    }
-
-    /**
-     * Returns average response time between first original sender's message and first response of administrator <br>
-     * Will return -1 if no responses registered
-     */
-    public fun countAverageResponseTime(tickets: MutableList<Ticket>): Long{
-        val ticketsWithAnswer = tickets.filter { ticket ->
-            ticket.messages.filter { it.sender != ticket.sender } .size >= 1
-        }
-        val lotOfResponses = ticketsWithAnswer.map { ticket ->
-            val originalSenderMessage = ticket.messages[0]
-            val administratorFirstMessage = ticket.messages.filter { it.sender != ticket.sender } .first()
-            administratorFirstMessage.timestamp - originalSenderMessage.timestamp
-        }
-        val result = lotOfResponses.sum() / Math.max(1, lotOfResponses.size)
-        if(result == 0L){
-            return -1L
-        }
-        return result
+        val countTickets = tickets.countReasons()
+        val activeUsers = tickets.activeUsers(5)
+        val averageResponseTime = tickets.averageResponseTime()
+        return Stats(countTickets, activeUsers, 1L)
     }
 
     /**
@@ -148,9 +103,10 @@ class ReportManager(val connectionSource: ConnectionSource) {
      */
     private fun configureTicketEntity(): DatabaseTableConfig<Ticket> {
         return DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
-            add(DatabaseFieldConfig("uid").apply { isId = true })
+            add(DatabaseFieldConfig("uid").apply { isGeneratedId = true;})
             add(DatabaseFieldConfig("status"))
             add(DatabaseFieldConfig("sender"))
+            add(DatabaseFieldConfig("server"))
             add(DatabaseFieldConfig("reason"))
             add(DatabaseFieldConfig("messages").apply { persisterClass = JsonPersister::class.java })
         }).apply { tableName = "tickets" }
@@ -189,7 +145,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Returns list with names of users who sent messages to given ticket
      */
     private fun getParticipants(ticket: Ticket): MutableList<String>{
-        return hashSetOf(*ticket.messages.map { it.sender }.toTypedArray()).toArrayList()
+        return hashSetOf(*ticket.messages.map { it.sender }.toTypedArray()).toMutableList()
     }
 
     /**
@@ -203,7 +159,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
         }
     }
 
-    public fun handleUpdateTicketStatus(ticketUid: UUID, status: TicketStatus, player: EntityPlayerMP){
+    public fun handleUpdateTicketStatus(ticketUid: Int, status: TicketStatus, player: EntityPlayerMP){
         var ticket = ticketDao.queryForId(ticketUid) ?: return
         if(canAccessTicket(ticket, player)) {
             ticket.status = status
@@ -231,7 +187,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
         NetworkHandler.instance.sendTo(SyncTickets(tickets), player)
     }
 
-    public fun handleAddMessage(ticketUid: UUID, message: String, player: EntityPlayerMP) {
+    public fun handleAddMessage(ticketUid: Int, message: String, player: EntityPlayerMP) {
         var ticket = ticketDao.queryForId(ticketUid)?: return
         if(canAccessTicket(ticket, player)){
             var ticketMessage = TicketMessage(player.commandSenderName, message)

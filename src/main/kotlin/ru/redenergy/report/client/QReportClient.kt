@@ -4,6 +4,7 @@ import com.rabbit.gui.GuiFoundation
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
+import org.bukkit.inventory.Inventory
 import org.lwjgl.input.Keyboard
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.SupportShow
@@ -13,7 +14,7 @@ import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.*
 
-@Mod(modid = "qreport-client", name = "QReport Client", modLanguageAdapter = "io.drakon.forgelin.KotlinAdapter")
+@Mod(modid = "qreport-client", name = "QReport Client", modLanguageAdapter = "io.drakon.forge.kotlin.KotlinAdapter")
 object QReportClient {
 
     /**

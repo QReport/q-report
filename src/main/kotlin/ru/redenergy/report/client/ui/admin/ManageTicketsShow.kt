@@ -47,7 +47,7 @@ class ManageTicketsShow: TicketsListShow(){
                 setIsVisible(true)
                 clear()
                 addAndSetDefault(status)
-                addAll(*TicketStatus.values.filter { it != status }.toTypedArray())
+                addAll(*TicketStatus.values().filter { it != status }.toTypedArray())
             }
         }
     }
