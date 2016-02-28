@@ -35,7 +35,7 @@ repositories{
     }
 }
 
-version = "v1.1.1"
+version = "v1.2.0"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
 
@@ -64,8 +64,8 @@ configurations.all {
 }
 
 dependencies {
-    common 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0'
-    common 'org.jetbrains.kotlin:kotlin-runtime:1.0.0'
+    commonShade 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0'
+    commonShade 'org.jetbrains.kotlin:kotlin-runtime:1.0.0'
     common ('com.github.QReport:Forgelin:-SNAPSHOT') {
         transitive = false
     }
@@ -85,7 +85,7 @@ dependencies {
 
 jar {
     configurations.shade.each{ dep ->
-        if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
+        if(!dep.getName().contains("bukkit")) {
             from(project.zipTree(dep)) {
                 exclude 'META-ING', 'META-INF/**'
             }
@@ -102,7 +102,7 @@ task serverJar(type: Jar){
         exclude 'ru/redenergy/report/client/**'
     }
     configurations.server.each{ dep ->
-        if(!dep.getName().contains("bukkit") && !dep.getName().contains("Forgelin")) {
+        if(!dep.getName().contains("bukkit")) {
             from(project.zipTree(dep)) {
                 exclude 'META-ING', 'META-INF/**'
             }
