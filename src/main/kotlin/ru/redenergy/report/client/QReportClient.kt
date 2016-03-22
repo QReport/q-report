@@ -4,8 +4,11 @@ import com.rabbit.gui.GuiFoundation
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
+import net.minecraftforge.common.MinecraftForge
 import org.bukkit.inventory.Inventory
+import org.bukkit.map.MinecraftFont
 import org.lwjgl.input.Keyboard
+import ru.redenergy.report.client.handler.UIOpenHandler
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.SupportShow
 import ru.redenergy.report.common.Stats
@@ -34,6 +37,7 @@ object QReportClient {
     public fun postInit(event: FMLPostInitializationEvent) {
         registerKeys()
         NetworkHandler.instance.initialise()
+        MinecraftForge.EVENT_BUS.register(UIOpenHandler())
         println("QReport Loaded")
     }
 
