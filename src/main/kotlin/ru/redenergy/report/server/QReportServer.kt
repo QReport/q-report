@@ -63,6 +63,7 @@ object QReportServer {
             registerPacket(UpdateAdminAccess::class)
             registerPacket(ChangeTicketStatus::class)
             registerPacket(SyncStatsPackets::class)
+            registerPacket(DeleteTicketRequest::class)
         }
     }
 

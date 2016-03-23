@@ -1,11 +1,14 @@
 package ru.redenergy.report.client.ui.admin
 
+import com.rabbit.gui.component.control.Button
 import com.rabbit.gui.component.control.DropDown
+import net.minecraft.util.EnumChatFormatting
 import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.ChangeTicketStatus
+import ru.redenergy.report.common.network.packet.DeleteTicketRequest
 import ru.redenergy.report.common.network.packet.RequestSyncPacket
 
 class ManageTicketsShow: TicketsListShow(){
@@ -16,12 +19,23 @@ class ManageTicketsShow: TicketsListShow(){
     }
 
     override fun registerComponents() {
-        registerComponent(DropDown<TicketStatus>(this.width / 5 + this.width / 6 + this.width / 3 - this.width / 10 , this.height / 6 - 5, this.width / 10)
+        registerComponent(DropDown<TicketStatus>(this.width / 5 + this.width / 6 + this.width / 3 - this.width / 10 - 20, this.height / 6 - 5, this.width / 10)
                 .setIsVisible(false)
                 .setIsEnabled(false)
                 .setId("status_dropdown")
                 .setItemSelectedListener( { dd, sel -> changeStatus() } ))
+        registerComponent(Button(this.width / 5 + this.width / 2, this.height / 6 - 6, 40, 15, "Delete")
+                .setIsEnabled(false)
+                .setIsVisible(false)
+                .setClickListener { deleteTicket() }
+                .setId("delBtn"))
         super.registerComponents()
+    }
+
+    fun deleteTicket(){
+        val ticket = selectedTicket ?: return
+        NetworkHandler.instance.sendToServer(DeleteTicketRequest(ticket.uid))
+        NetworkHandler.instance.sendToServer(RequestSyncPacket())
     }
 
     fun changeStatus(){
@@ -34,21 +48,21 @@ class ManageTicketsShow: TicketsListShow(){
 
     override fun getTicketsListContent(): List<TicketEntry> =
         QReportClient.syncedTickets
-                .sortedBy { it.messages.get(0).timestamp }
+                .sortedBy { it.messages[0].timestamp }
                 .reversed()
                 .map { TicketEntry(it, {select(it)}) }
 
     override fun updateInformation() {
         super.updateInformation()
-        this.selectedTicket?.apply{
-            var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown")
-            dropdown.apply {
-                setIsEnabled(true)
-                setIsVisible(true)
-                clear()
-                addAndSetDefault(status)
-                addAll(*TicketStatus.values().filter { it != status }.toTypedArray())
-            }
-        }
+        val ticket = selectedTicket ?: return;
+        findComponentById<DropDown<TicketStatus>>("status_dropdown")
+                .setIsEnabled(true)
+                .setIsVisible(true)
+                .clear()
+                .addAndSetDefault(ticket.status)
+                .addAll(*TicketStatus.values().filter { it != ticket.status }.toTypedArray())
+        findComponentById<Button>("delBtn")
+                .setIsVisible(true)
+                .setIsEnabled(true)
     }
 }

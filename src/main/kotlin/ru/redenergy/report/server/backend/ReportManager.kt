@@ -25,7 +25,7 @@ import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.server.orm.JsonPersister
 import ru.redenergy.vault.ForgeVault
 
-public class ReportManager(val connectionSource: ConnectionSource) {
+class ReportManager(val connectionSource: ConnectionSource) {
 
     init{
         DataPersisterManager.registerDataPersisters(JsonPersister.getSingleton())
@@ -46,26 +46,26 @@ public class ReportManager(val connectionSource: ConnectionSource) {
      */
     var cachedTickets: MutableList<Ticket> = arrayListOf()
 
-    public fun initialize() {
+    fun initialize() {
         TableUtils.createTableIfNotExists(connectionSource, Ticket::class.java)
     }
 
     /**
      * Stores ticket in database
      */
-    public fun addTicket(ticket: Ticket) = ticketDao.create(ticket)
+    fun addTicket(ticket: Ticket) = ticketDao.create(ticket)
 
     /**
      * Deletes given ticket from database
      */
-    public fun deleteTicket(ticket: Ticket) = ticketDao.delete(ticket)
+    fun deleteTicket(ticket: Ticket) = ticketDao.delete(ticket)
 
     /**
      * Queries all tickets from database <br>
      * Replaces tickets cache with obtained from database <br>
      * Returns cache
      */
-    public fun getTickets(): MutableList<Ticket> {
+    fun getTickets(): MutableList<Ticket> {
         cachedTickets.clear()
         cachedTickets.addAll(ticketDao.queryForAll())
         return cachedTickets
@@ -74,7 +74,7 @@ public class ReportManager(val connectionSource: ConnectionSource) {
     /**
      * Returns all tickets sent by player with the given name
      */
-    public fun getTicketsByPlayer(player: String): MutableList<Ticket> =
+    fun getTicketsByPlayer(player: String): MutableList<Ticket> =
         ticketDao.queryBuilder().where().eq("sender", player).query()
 
     /**
@@ -83,19 +83,19 @@ public class ReportManager(val connectionSource: ConnectionSource) {
      * @param reason - reason of a ticket
      * @param sender - name of a sender
      */
-    public fun newTicket(text: String, reason: TicketReason, sender: String): Ticket {
+    fun newTicket(text: String, reason: TicketReason, sender: String): Ticket {
         val ticket = Ticket(-1, status = TicketStatus.OPEN, sender = sender, reason = reason,
                 messages = arrayListOf(TicketMessage(sender, text)), server = QReportServer.server)
         addTicket(ticket)
         return ticket
     }
 
-    public fun gatherStats(): Stats{
+    fun gatherStats(): Stats{
         val tickets = getTickets()
         val countTickets = tickets.countReasons()
         val activeUsers = tickets.activeUsers(5)
         val averageResponseTime = tickets.averageResponseTime()
-        return Stats(countTickets, activeUsers, 1L)
+        return Stats(countTickets, activeUsers, averageResponseTime)
     }
 
     /**
@@ -159,7 +159,7 @@ public class ReportManager(val connectionSource: ConnectionSource) {
         }
     }
 
-    public fun handleUpdateTicketStatus(ticketUid: Int, status: TicketStatus, player: EntityPlayerMP){
+    fun handleUpdateTicketStatus(ticketUid: Int, status: TicketStatus, player: EntityPlayerMP){
         var ticket = ticketDao.queryForId(ticketUid) ?: return
         if(canAccessTicket(ticket, player)) {
             ticket.status = status
@@ -174,7 +174,7 @@ public class ReportManager(val connectionSource: ConnectionSource) {
         }
     }
 
-    public fun handleSyncRequest(player: EntityPlayerMP) {
+    fun handleSyncRequest(player: EntityPlayerMP) {
         val adminAccess = canAccessTicketManagement(player)
 
         NetworkHandler.instance.sendTo(UpdateAdminAccess(adminAccess), player)
@@ -187,7 +187,7 @@ public class ReportManager(val connectionSource: ConnectionSource) {
         NetworkHandler.instance.sendTo(SyncTickets(tickets), player)
     }
 
-    public fun handleAddMessage(ticketUid: Int, message: String, player: EntityPlayerMP) {
+    fun handleAddMessage(ticketUid: Int, message: String, player: EntityPlayerMP) {
         var ticket = ticketDao.queryForId(ticketUid)?: return
         if(canAccessTicket(ticket, player)){
             var ticketMessage = TicketMessage(player.commandSenderName, message)
@@ -203,6 +203,15 @@ public class ReportManager(val connectionSource: ConnectionSource) {
         }
     }
 
-    public fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) =
+    fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) =
             newTicket(text, reason, player.commandSenderName)
+
+    fun handleDeleteTicker(id: Int, player: EntityPlayerMP){
+        var ticket = ticketDao.queryForId(id) ?: return
+        if(canAccessTicket(ticket, player)){
+            deleteTicket(ticket)
+        } else {
+            player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
+        }
+    }
 }

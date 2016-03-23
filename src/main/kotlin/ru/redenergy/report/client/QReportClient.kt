@@ -55,6 +55,7 @@ object QReportClient {
             registerPacket(UpdateAdminAccess::class)
             registerPacket(ChangeTicketStatus::class)
             registerPacket(SyncStatsPackets::class)
+            registerPacket(DeleteTicketRequest::class)
         }
     }
 
