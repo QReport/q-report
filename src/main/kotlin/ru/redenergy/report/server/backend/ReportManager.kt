@@ -83,14 +83,11 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * @param reason - reason of a ticket
      * @param sender - name of a sender
      */
-    fun newTicket(text: String, reason: TicketReason, sender: String): Ticket {
-        val ticket = Ticket(-1, status = TicketStatus.OPEN, sender = sender, reason = reason,
-                messages = arrayListOf(TicketMessage(sender, text)), server = QReportServer.server)
-        addTicket(ticket)
-        return ticket
-    }
+    fun newTicket(text: String, reason: TicketReason, sender: String): Ticket =
+        Ticket(-1, TicketStatus.OPEN, sender, reason, arrayListOf(TicketMessage(sender, text)), QReportServer.server)
+                .apply { addTicket(this) }
 
-    fun gatherStats(): Stats{
+    fun gatherStats(): Stats {
         val tickets = getTickets()
         val countTickets = tickets.countReasons()
         val activeUsers = tickets.activeUsers(5)
@@ -152,12 +149,10 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Sends message to all players with the names in the list <br>
      * If any of players is offline he won't receive message
      */
-    private fun notifyUsers(users: MutableList<String>, message: IChatComponent){
-        for(user in users){
-            var player = MinecraftServer.getServer().configurationManager.func_152612_a(user) ?: continue
-            player.addChatMessage(message)
-        }
-    }
+    private fun notifyUsers(users: MutableList<String>, message: IChatComponent): Unit =
+        users.map { MinecraftServer.getServer().configurationManager.func_152612_a(it) }
+                .filter { it != null }
+                .forEach { it.addChatMessage(message) }
 
     fun handleUpdateTicketStatus(ticketUid: Int, status: TicketStatus, player: EntityPlayerMP){
         var ticket = ticketDao.queryForId(ticketUid) ?: return
@@ -165,9 +160,9 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticket.status = status
             ticketDao.update(ticket)
             if(QReportServer.notifications) {
-                notifyUsers(getParticipants(ticket).apply { remove(player.commandSenderName) },
-                        ChatComponentTranslation("chat.messages.update.status", player.displayName, ticket.shortUid, ticket.status)
-                                .apply { chatStyle.setColor(EnumChatFormatting.GOLD) })
+                val notified = getParticipants(ticket).apply { remove(player.commandSenderName) }
+                val message = ChatComponentTranslation("chat.messages.update.status", player.displayName, ticket.shortUid, ticket.status).apply { chatStyle.color = EnumChatFormatting.GOLD }
+                notifyUsers(notified, message)
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
@@ -176,27 +171,29 @@ class ReportManager(val connectionSource: ConnectionSource) {
 
     fun handleSyncRequest(player: EntityPlayerMP) {
         val adminAccess = canAccessTicketManagement(player)
-
         NetworkHandler.sendTo(UpdateAdminAccess(adminAccess), player)
 
-        if(adminAccess) NetworkHandler.sendTo(SyncStatsPackets(gatherStats()), player)
+        if(adminAccess)
+            NetworkHandler.sendTo(SyncStatsPackets(gatherStats()), player)
 
-        var tickets = if (adminAccess) getTickets()
-                        else getTicketsByPlayer(player.commandSenderName)
+        var tickets = if (adminAccess)
+                          getTickets()
+                      else
+                          getTicketsByPlayer(player.commandSenderName)
 
         NetworkHandler.sendTo(SyncTickets(tickets), player)
     }
 
-    fun handleAddMessage(ticketUid: Int, message: String, player: EntityPlayerMP) {
+    fun handleAddMessage(ticketUid: Int, text: String, player: EntityPlayerMP) {
         var ticket = ticketDao.queryForId(ticketUid)?: return
         if(canAccessTicket(ticket, player)){
-            var ticketMessage = TicketMessage(player.commandSenderName, message)
+            var ticketMessage = TicketMessage(player.commandSenderName, text)
             ticket.messages.add(ticketMessage)
             ticketDao.update(ticket)
             if(QReportServer.notifications) {
-                notifyUsers(getParticipants(ticket).apply { remove(player.commandSenderName) },
-                        ChatComponentTranslation("chat.messages.add.message", player.displayName, ticket.shortUid)
-                                .apply { chatStyle.setColor(EnumChatFormatting.GOLD) })
+                val notified = getParticipants(ticket).apply { remove(player.commandSenderName) }
+                val message = ChatComponentTranslation("chat.messages.add.message", player.displayName, ticket.shortUid).apply { chatStyle.color = EnumChatFormatting.GOLD }
+                notifyUsers(notified, message)
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
