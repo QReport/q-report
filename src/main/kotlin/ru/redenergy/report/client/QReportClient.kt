@@ -31,20 +31,21 @@ object QReportClient {
     var adminAccess = false
 
     @Mod.EventHandler
+    fun init(event: FMLInitializationEvent) {
+        NetworkHandler.initialise()
+        NetworkHandler.registerDefaultPackets()
+    }
+
+    @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
         registerKeys()
-        NetworkHandler.initialise()
+        NetworkHandler.postInitialize()
         MinecraftForge.EVENT_BUS.register(UIOpenHandler())
         println("QReport Loaded")
     }
 
-    @Mod.EventHandler
-    fun init(event: FMLInitializationEvent) {
-        NetworkHandler.registerDefaultPackets()
-    }
 
     private fun registerKeys() {
-        NetworkHandler.postInitialize()
         var keyboardController = KeyboardController()
         keyboardController.register(Keyboard.KEY_R, "Support center") { if (Keyboard.isKeyDown(Keyboard.KEY_TAB)) GuiFoundation.display(SupportShow()) }
         keyboardController.submit()
