@@ -14,6 +14,7 @@ import io.netty.handler.codec.MessageToMessageCodec
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.player.EntityPlayerMP
 import net.minecraft.network.NetHandlerPlayServer
+import ru.redenergy.report.common.network.packet.*
 import java.util.*
 import kotlin.reflect.KClass
 
@@ -21,7 +22,7 @@ import kotlin.reflect.KClass
  * Rewritten in Kotlin
  */
 @ChannelHandler.Sharable
-class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
+object  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
 
     /**
      * Synchronous message channel pair based on netty
@@ -147,7 +148,15 @@ class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
         (this.channels[Side.CLIENT] as FMLEmbeddedChannel).writeAndFlush(message)
     }
 
-    companion object {
-        val instance = NetworkHandler()
+    fun registerDefaultPackets(){
+        registerPacket(TicketPacket::class)
+        registerPacket(RequestSyncPacket::class)
+        registerPacket(SyncTickets::class)
+        registerPacket(AddMessagePacket::class)
+        registerPacket(UpdateAdminAccess::class)
+        registerPacket(ChangeTicketStatus::class)
+        registerPacket(SyncStatsPackets::class)
+        registerPacket(DeleteTicketRequest::class)
     }
+
 }

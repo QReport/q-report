@@ -40,7 +40,7 @@ open class TicketsListShow : Show() {
 
     override fun onInit(){
         super.onInit()
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+        NetworkHandler.sendToServer(RequestSyncPacket())
     }
 
     override fun setup(){
@@ -123,8 +123,8 @@ open class TicketsListShow : Show() {
     private fun addMessage(){
         var message = (findComponentById<MultiTextbox>("new_message_field") as MultiTextbox).text
         if(this.selectedTicket == null || message.trim().equals("")) return
-        NetworkHandler.instance.sendToServer(AddMessagePacket(this.selectedTicket!!.uid, message))
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+        NetworkHandler.sendToServer(AddMessagePacket(this.selectedTicket!!.uid, message))
+        NetworkHandler.sendToServer(RequestSyncPacket())
     }
 
 

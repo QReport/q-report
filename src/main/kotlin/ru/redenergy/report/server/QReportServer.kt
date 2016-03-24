@@ -30,7 +30,7 @@ object QReportServer {
         loadConfig(config)
         config.save()
         ticketManager = ReportManager(JdbcConnectionSource(jdbcPath, jdbcLogin, jdbcPassword))
-        NetworkHandler.instance.initialise()
+        NetworkHandler.initialise()
     }
 
     /**
@@ -48,29 +48,13 @@ object QReportServer {
 
     @Mod.EventHandler
     fun init(event: FMLPreInitializationEvent){
-        registerPackets()
-    }
-
-    /**
-     * Registers packets in NetworkHandler instance
-     */
-    private fun registerPackets(){
-        NetworkHandler.instance.apply {
-            registerPacket(TicketPacket::class)
-            registerPacket(RequestSyncPacket::class)
-            registerPacket(SyncTickets::class)
-            registerPacket(AddMessagePacket::class)
-            registerPacket(UpdateAdminAccess::class)
-            registerPacket(ChangeTicketStatus::class)
-            registerPacket(SyncStatsPackets::class)
-            registerPacket(DeleteTicketRequest::class)
-        }
+        NetworkHandler.registerDefaultPackets()
     }
 
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent){
         println("Serverside QReport Loaded")
-        NetworkHandler.instance.postInitialize()
+        NetworkHandler.postInitialize()
         ticketManager.initialize()
     }
 }

@@ -40,7 +40,7 @@ class ReportShow : Show() {
     private fun send(){
         var text = (findComponentById<TextBox>("text_box") as MultiTextbox).text
         var reason = (findComponentById<DropDown<TicketReason>>("reason_dropdown") as DropDown<TicketReason>).selectedElement.value
-        NetworkHandler.instance.sendToServer(TicketPacket(text, reason))
+        NetworkHandler.sendToServer(TicketPacket(text, reason))
         this.getStage().displayPrevious()
     }
 

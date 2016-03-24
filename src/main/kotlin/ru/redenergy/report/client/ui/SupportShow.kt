@@ -16,7 +16,7 @@ class SupportShow: Show() {
 
     init {
         background = DefaultBackground()
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+        NetworkHandler.sendToServer(RequestSyncPacket())
     }
 
     override fun setup() {

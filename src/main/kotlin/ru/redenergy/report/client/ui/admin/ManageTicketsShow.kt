@@ -37,8 +37,8 @@ class ManageTicketsShow: TicketsListShow(){
         val ticket = this.selectedTicket ?: return
         var dropdown = findComponentById<DropDown<TicketStatus>>("status_dropdown")
         var updatedStatus = dropdown.selectedElement.value
-        NetworkHandler.instance.sendToServer(ChangeTicketStatus(ticket.uid, updatedStatus))
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+        NetworkHandler.sendToServer(ChangeTicketStatus(ticket.uid, updatedStatus))
+        NetworkHandler.sendToServer(RequestSyncPacket())
     }
 
     override fun getTicketsListContent(): List<TicketEntry> =

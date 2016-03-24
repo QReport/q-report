@@ -177,14 +177,14 @@ class ReportManager(val connectionSource: ConnectionSource) {
     fun handleSyncRequest(player: EntityPlayerMP) {
         val adminAccess = canAccessTicketManagement(player)
 
-        NetworkHandler.instance.sendTo(UpdateAdminAccess(adminAccess), player)
+        NetworkHandler.sendTo(UpdateAdminAccess(adminAccess), player)
 
-        if(adminAccess) NetworkHandler.instance.sendTo(SyncStatsPackets(gatherStats()), player)
+        if(adminAccess) NetworkHandler.sendTo(SyncStatsPackets(gatherStats()), player)
 
         var tickets = if (adminAccess) getTickets()
                         else getTicketsByPlayer(player.commandSenderName)
 
-        NetworkHandler.instance.sendTo(SyncTickets(tickets), player)
+        NetworkHandler.sendTo(SyncTickets(tickets), player)
     }
 
     fun handleAddMessage(ticketUid: Int, message: String, player: EntityPlayerMP) {

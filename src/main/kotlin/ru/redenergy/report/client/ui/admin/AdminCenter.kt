@@ -17,7 +17,7 @@ class AdminCenter: Show() {
 
     override fun onInit() {
         super.onInit()
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+        NetworkHandler.sendToServer(RequestSyncPacket())
     }
 
     override fun setup() {

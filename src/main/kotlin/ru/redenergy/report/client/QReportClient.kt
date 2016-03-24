@@ -5,8 +5,6 @@ import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.common.MinecraftForge
-import org.bukkit.inventory.Inventory
-import org.bukkit.map.MinecraftFont
 import org.lwjgl.input.Keyboard
 import ru.redenergy.report.client.handler.UIOpenHandler
 import ru.redenergy.report.client.keyboard.KeyboardController
@@ -15,7 +13,6 @@ import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.*
 
 @Mod(modid = "qreport-client", name = "QReport Client", modLanguageAdapter = "io.drakon.forge.kotlin.KotlinAdapter")
 object QReportClient {
@@ -36,31 +33,18 @@ object QReportClient {
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
         registerKeys()
-        NetworkHandler.instance.initialise()
+        NetworkHandler.initialise()
         MinecraftForge.EVENT_BUS.register(UIOpenHandler())
         println("QReport Loaded")
     }
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
-        registerPackets()
-    }
-
-    private fun registerPackets() {
-        NetworkHandler.instance.apply {
-            registerPacket(TicketPacket::class)
-            registerPacket(RequestSyncPacket::class)
-            registerPacket(SyncTickets::class)
-            registerPacket(AddMessagePacket::class)
-            registerPacket(UpdateAdminAccess::class)
-            registerPacket(ChangeTicketStatus::class)
-            registerPacket(SyncStatsPackets::class)
-            registerPacket(DeleteTicketRequest::class)
-        }
+        NetworkHandler.registerDefaultPackets()
     }
 
     private fun registerKeys() {
-        NetworkHandler.instance.postInitialize()
+        NetworkHandler.postInitialize()
         var keyboardController = KeyboardController()
         keyboardController.register(Keyboard.KEY_R, "Support center") { if (Keyboard.isKeyDown(Keyboard.KEY_TAB)) GuiFoundation.display(SupportShow()) }
         keyboardController.submit()

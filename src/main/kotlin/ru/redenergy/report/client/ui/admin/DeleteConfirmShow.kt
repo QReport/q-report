@@ -28,8 +28,8 @@ class DeleteConfirmShow(val ticket: Int): Show() {
     }
 
     fun delete(){
-        NetworkHandler.instance.sendToServer(DeleteTicketRequest(ticket))
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
+        NetworkHandler.sendToServer(DeleteTicketRequest(ticket))
+        NetworkHandler.sendToServer(RequestSyncPacket())
         getStage().displayPrevious();
     }
 }
