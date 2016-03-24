@@ -31,6 +31,7 @@ show.tickets.label.title=Добавить сообшение:
 show.tickets.send=Отправить
 show.tickets.reason=Категория:
 show.tickets.status=Статус:
+show.tickets.delete=Удалить
 
 ##admin center
 show.admin.title=Панель администратора

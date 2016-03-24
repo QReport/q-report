@@ -31,6 +31,7 @@ show.tickets.label.title=Add message:
 show.tickets.send=Send
 show.tickets.reason=Reason:
 show.tickets.status=Status:
+show.tickets.delete=Delete
 
 ##admin center
 show.admin.title=Admin center

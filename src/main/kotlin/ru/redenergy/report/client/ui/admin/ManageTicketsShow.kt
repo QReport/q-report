@@ -2,6 +2,7 @@ package ru.redenergy.report.client.ui.admin
 
 import com.rabbit.gui.component.control.Button
 import com.rabbit.gui.component.control.DropDown
+import net.minecraft.client.resources.I18n
 import net.minecraft.util.EnumChatFormatting
 import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.client.ui.TicketsListShow
@@ -24,7 +25,7 @@ class ManageTicketsShow: TicketsListShow(){
                 .setIsEnabled(false)
                 .setId("status_dropdown")
                 .setItemSelectedListener( { dd, sel -> changeStatus() } ))
-        registerComponent(Button(this.width / 5 + this.width / 2, this.height / 6 - 6, 40, 15, "Delete")
+        registerComponent(Button(this.width / 5 + this.width / 2, this.height / 6 - 6, 40, 15, I18n.format("show.tickets.delete"))
                 .setIsEnabled(false)
                 .setIsVisible(false)
                 .setClickListener { deleteTicket() }

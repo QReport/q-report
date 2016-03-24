@@ -66,8 +66,8 @@ configurations.all {
 dependencies {
     commonShade 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0'
     commonShade 'org.jetbrains.kotlin:kotlin-runtime:1.0.0'
-    common ('com.github.QReport:Forgelin:1.0.0+1.7.10) {
-        transitive = false
+    common ('com.github.QReport:Forgelin:1.0.0+1.7.10'){
+            transitive = false
     }
 
     commonShade 'com.github.QReport:q-report-common:v1.2.0'
