@@ -54,8 +54,8 @@ class ManageTicketsShow: TicketsListShow(){
                 .setIsEnabled(true)
                 .setIsVisible(true)
                 .clear()
-                .addAndSetDefault(ticket.status)
-                .addAll(*TicketStatus.values().filter { it != ticket.status }.toTypedArray())
+                .addItemAndSetDefault(I18n.format(ticket.status.translateKey), ticket.status)
+                .apply { TicketStatus.values().filter { it != ticket.status }.forEach { add(I18n.format(it.translateKey), it) } }
         findComponentById<Button>("delBtn")
                 .setIsVisible(true)
                 .setIsEnabled(true)
