@@ -28,15 +28,9 @@ class ManageTicketsShow: TicketsListShow(){
         registerComponent(Button(this.width / 5 + this.width / 2, this.height / 6 - 6, 40, 15, I18n.format("show.tickets.delete"))
                 .setIsEnabled(false)
                 .setIsVisible(false)
-                .setClickListener { deleteTicket() }
+                .setClickListener { selectedTicket?.let{ t -> getStage().display(DeleteConfirmShow(t.uid))} }
                 .setId("delBtn"))
         super.registerComponents()
-    }
-
-    fun deleteTicket(){
-        val ticket = selectedTicket ?: return
-        NetworkHandler.instance.sendToServer(DeleteTicketRequest(ticket.uid))
-        NetworkHandler.instance.sendToServer(RequestSyncPacket())
     }
 
     fun changeStatus(){

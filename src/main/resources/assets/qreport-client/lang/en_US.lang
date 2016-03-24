@@ -45,6 +45,11 @@ show.stats.avgtime=Average response time - %s hours
 show.stats.activeusers=Active users:
 show.stats.unknown=unknown
 
+##delete ticket
+show.delete.content=Are you sure you want to delete ticket #%s?
+show.delete.confirm=Confirm
+show.delete.cancel=Cancel
+
 #declension
 ticket.one=ticket
 ticket.few=tickets

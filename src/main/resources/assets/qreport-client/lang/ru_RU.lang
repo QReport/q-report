@@ -45,6 +45,11 @@ show.stats.avgtime=Среднее время ответа - %s ч.
 show.stats.activeusers=Активные пользователи:
 show.stats.unknown=неизвестно
 
+##delete ticket
+show.delete.content=Вы дейсвтительно хотите безвозвратно удалить заявку #%d?
+show.delete.confirm=Подтвердить
+show.delete.cancel=Отменить
+
 #declension
 ticket.one=тикет
 ticket.few=тикета
