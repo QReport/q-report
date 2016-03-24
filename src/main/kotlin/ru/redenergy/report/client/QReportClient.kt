@@ -23,18 +23,18 @@ object QReportClient {
     /**
      * Contains tickets which have been received from server
      */
-    public var syncedTickets: MutableList<Ticket> = arrayListOf()
+    var syncedTickets: MutableList<Ticket> = arrayListOf()
     /**
      * Contains statistics which have been received from server
      */
-    public var syncedStats: Stats = Stats(mapOf(TicketReason.BUG to 0, TicketReason.OTHER to 0, TicketReason.GRIEFING to 0, TicketReason.OTHER to 0), mapOf(), -1L)
+    var syncedStats: Stats = Stats(mapOf(TicketReason.BUG to 0, TicketReason.OTHER to 0, TicketReason.GRIEFING to 0, TicketReason.OTHER to 0), mapOf(), -1L)
     /**
      * Shows if current player can manage user requests, if set to true 'admin' button will be available
      */
-    public var adminAccess = false
+    var adminAccess = false
 
     @Mod.EventHandler
-    public fun postInit(event: FMLPostInitializationEvent) {
+    fun postInit(event: FMLPostInitializationEvent) {
         registerKeys()
         NetworkHandler.instance.initialise()
         MinecraftForge.EVENT_BUS.register(UIOpenHandler())
@@ -42,7 +42,7 @@ object QReportClient {
     }
 
     @Mod.EventHandler
-    public fun init(event: FMLInitializationEvent) {
+    fun init(event: FMLInitializationEvent) {
         registerPackets()
     }
 

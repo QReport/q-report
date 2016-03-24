@@ -25,7 +25,7 @@ object QReportServer {
     var server = "unknown"
 
     @Mod.EventHandler
-    public fun preInit(event: FMLPreInitializationEvent){
+    fun preInit(event: FMLPreInitializationEvent){
         var config = Configuration(event.suggestedConfigurationFile)
         loadConfig(config)
         config.save()
@@ -47,7 +47,7 @@ object QReportServer {
     }
 
     @Mod.EventHandler
-    public fun init(event: FMLPreInitializationEvent){
+    fun init(event: FMLPreInitializationEvent){
         registerPackets()
     }
 
@@ -68,7 +68,7 @@ object QReportServer {
     }
 
     @Mod.EventHandler
-    public fun postInit(event: FMLPostInitializationEvent){
+    fun postInit(event: FMLPostInitializationEvent){
         println("Serverside QReport Loaded")
         NetworkHandler.instance.postInitialize()
         ticketManager.initialize()

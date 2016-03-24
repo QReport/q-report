@@ -21,7 +21,7 @@ import kotlin.reflect.KClass
  * Rewritten in Kotlin
  */
 @ChannelHandler.Sharable
-public class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
+class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPacket>() {
 
     /**
      * Synchronous message channel pair based on netty
@@ -39,7 +39,7 @@ public class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPack
     /**
      * Initializes Netty channels
      */
-    public fun initialise(){
+    fun initialise(){
         if(!initialized){
             channels = NetworkRegistry.INSTANCE.newChannel("qreport", this)
             initialized = true
@@ -51,7 +51,7 @@ public class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPack
      * Returns <code>true</code> if packet has been successfully registered, <code>false</code> otherwise <br>
      * Note: max packet limit is 256 (because it's max value one byte can store)
      */
-    public fun registerPacket(type: KClass<out AbstractPacket>) : Boolean{
+    fun registerPacket(type: KClass<out AbstractPacket>) : Boolean{
         if(this.packets.size > 256 || this.packets.contains(type) || this.postInitialized){
             return false
         }
@@ -62,7 +62,7 @@ public class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPack
     /**
      * Sorts packets and disables new packets registration
      */
-    public fun postInitialize(){
+    fun postInitialize(){
         if(postInitialized){
             this.packets.sortBy { it.qualifiedName }
             this.postInitialized = true
@@ -148,6 +148,6 @@ public class  NetworkHandler: MessageToMessageCodec<FMLProxyPacket, AbstractPack
     }
 
     companion object {
-        public val instance = NetworkHandler()
+        val instance = NetworkHandler()
     }
 }

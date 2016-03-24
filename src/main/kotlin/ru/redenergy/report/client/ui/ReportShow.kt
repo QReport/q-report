@@ -19,7 +19,7 @@ class ReportShow : Show() {
         title = "Report"
     }
 
-    public override fun setup(){
+    override fun setup(){
         super.setup()
         registerComponent(TextLabel(this.width / 3, this.height / 4 - 15, this.width / 3, I18n.format("show.report.problem")))
         registerComponent(MultiTextbox(this.width / 3, this.height / 4, this.width / 3, this.height / 3)

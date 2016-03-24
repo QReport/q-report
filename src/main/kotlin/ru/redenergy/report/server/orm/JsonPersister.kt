@@ -43,7 +43,7 @@ open class JsonPersister(): StringType(SqlType.LONG_STRING, classes) {
         /**
          * Requested by ORMLite
          */
-        @JvmStatic public fun getSingleton(): JsonPersister = JsonPersister()
+        @JvmStatic fun getSingleton(): JsonPersister = JsonPersister()
     }
 }
 
