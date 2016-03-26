@@ -207,6 +207,11 @@ class ReportManager(val connectionSource: ConnectionSource) {
         var ticket = ticketDao.queryForId(id) ?: return
         if(canAccessTicket(ticket, player)){
             deleteTicket(ticket)
+            if(QReportServer.notifications){
+                val notified = getParticipants(ticket).apply { remove(player.commandSenderName) }
+                val message = ChatComponentTranslation("chat.messages.delete.ticket", player.displayName, ticket.shortUid).apply { chatStyle.color = EnumChatFormatting.GOLD }
+                notifyUsers(notified, message)
+            }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }

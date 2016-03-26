@@ -58,3 +58,4 @@ ticket.many=тикетов
 #chat messsages
 chat.messages.update.status=%s изменил статус тикета %s на "%s"
 chat.messages.add.message=%s добавил новое сообщение в тикет %s
+chat.messages.delete.ticket=%s удалил тикет #%s
