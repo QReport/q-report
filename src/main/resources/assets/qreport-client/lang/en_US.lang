@@ -59,3 +59,4 @@ ticket.many=tickets
 chat.messages.update.status=%s changed status of ticket %s to "%s"
 chat.messages.add.message=%s added new message to the ticket %s
 chat.messages.delete.ticket=%s deleted ticket #%s
+chat.messages.add.ticket=%s submitted new ticket #%s

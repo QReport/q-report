@@ -149,7 +149,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
      * Sends message to all players with the names in the list <br>
      * If any of players is offline he won't receive message
      */
-    private fun notifyUsers(users: MutableList<String>, message: IChatComponent): Unit =
+    private fun notifyUsers(users: List<String>, message: IChatComponent): Unit =
         users.map { MinecraftServer.getServer().configurationManager.func_152612_a(it) }
                 .filter { it != null }
                 .forEach { it.addChatMessage(message) }
@@ -200,8 +200,15 @@ class ReportManager(val connectionSource: ConnectionSource) {
         }
     }
 
-    fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) =
-            newTicket(text, reason, player.commandSenderName)
+    fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) {
+        val ticket = newTicket(text, reason, player.commandSenderName)
+        if(QReportServer.notifications)
+            notifyUsers((MinecraftServer.getServer().configurationManager.playerEntityList as MutableList<EntityPlayerMP>)
+                    .map {it.commandSenderName}
+                    .filter { ForgeVault.getPermission().has(null as String?, it, QReportServer.permissionNode)},
+                    ChatComponentTranslation("chat.messages.add.ticket", player.commandSenderName, ticket.uid))
+
+    }
 
     fun handleDeleteTicker(id: Int, player: EntityPlayerMP){
         var ticket = ticketDao.queryForId(id) ?: return
