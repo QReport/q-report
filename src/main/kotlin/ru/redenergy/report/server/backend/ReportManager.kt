@@ -201,6 +201,7 @@ class ReportManager(val connectionSource: ConnectionSource) {
     }
 
     fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) {
+        if(text.isBlank()) return
         val ticket = newTicket(text, reason, player.commandSenderName)
         if(QReportServer.notifications)
             notifyUsers((MinecraftServer.getServer().configurationManager.playerEntityList as MutableList<EntityPlayerMP>)
