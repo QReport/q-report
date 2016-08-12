@@ -25,6 +25,7 @@ object QReportServer {
     var jdbcPassword = " "
     var notifications = true
     var server = "unknown"
+    var useConnectionPool = false
 
     @Mod.EventHandler
     fun preInit(event: FMLPreInitializationEvent){
@@ -35,8 +36,11 @@ object QReportServer {
         if(jdbcPath.contains("mysql") && (!jdbcPath.contains("useUnicode=true") || !jdbcPath.contains("characterEncoding=utf8")))
             FMLLog.bigWarning("You're using MySQL but didn't enable unicode support. Problems with cyrillic symbols may occur." +
                              " Add `useUnicode=true&characterEncoding=utf8` to jdbc url to enable unicode support")
+        val connectionSource =
+            if(useConnectionPool) JdbcPooledConnectionSource(jdbcPath, jdbcLogin, jdbcPassword)
+            else                  JdbcConnectionSource(jdbcPath, jdbcLogin, jdbcPassword)
 
-        ticketManager = ReportManager(JdbcPooledConnectionSource(jdbcPath, jdbcLogin, jdbcPassword))
+        ticketManager = ReportManager(connectionSource)
         NetworkHandler.initialise()
     }
 
@@ -51,6 +55,7 @@ object QReportServer {
         this.permissionNode = config.getString("permission", "QReport Permission", permissionNode, "Permission node required to manage tickets (make sure you enabled 'check-permission')")
         this.notifications = config.getBoolean("notifications", "QReport", notifications, "Enables notification for users when somebody adds new message or updates ticket status")
         this.server = config.getString("server", "QReport", server, "Identifier of current server, used when there is more than 1 server in one database")
+        this.useConnectionPool = config.getBoolean("use-connection-pool", "QReport DB", useConnectionPool, "Whether or not to use connection pool for querying database. Before enabling make sure your database configured accordingly")
     }
 
     @Mod.EventHandler

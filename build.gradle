@@ -35,7 +35,7 @@ repositories{
     }
 }
 
-version = "v1.2.2"
+version = "v1.2.3"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
 
