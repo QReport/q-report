@@ -2,6 +2,7 @@ package ru.redenergy.report.server
 
 import com.j256.ormlite.jdbc.JdbcConnectionSource
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource
+import cpw.mods.fml.common.FMLLog
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
@@ -30,6 +31,11 @@ object QReportServer {
         var config = Configuration(event.suggestedConfigurationFile)
         loadConfig(config)
         config.save()
+
+        if(jdbcPath.contains("mysql") && (!jdbcPath.contains("useUnicode=true") || !jdbcPath.contains("characterEncoding=utf8")))
+            FMLLog.bigWarning("You're using MySQL but didn't enable unicode support. Problems with cyrillic symbols may occur." +
+                             " Add `useUnicode=true&characterEncoding=utf8` to jdbc url to enable unicode support")
+
         ticketManager = ReportManager(JdbcPooledConnectionSource(jdbcPath, jdbcLogin, jdbcPassword))
         NetworkHandler.initialise()
     }
