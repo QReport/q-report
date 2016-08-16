@@ -1,24 +1,22 @@
 package ru.redenergy.report.common.network.packet
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage
+import cpw.mods.fml.common.network.simpleimpl.MessageContext
 import io.netty.buffer.ByteBuf
-import io.netty.channel.ChannelHandlerContext
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
+import ru.redenergy.report.common.network.Message
 import ru.redenergy.report.server.QReportServer
-import ru.redenergy.report.common.network.AbstractPacket
 
 /**
  * Sent from client ot server when user opens ui with previous requests
  */
-class RequestSyncPacket() : AbstractPacket{
+class RequestSyncPacket() : Message<RequestSyncPacket>{
 
-    override fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {}
+    override fun toBytes(buf: ByteBuf) {}
 
-    override fun decodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {}
+    override fun fromBytes(buf: ByteBuf) {}
 
-    override fun handleClient(player: EntityPlayer) {}
-
-    override fun handleServer(player: EntityPlayer) {
-        QReportServer.ticketManager.handleSyncRequest(player as EntityPlayerMP)
+    override fun onMessage(message: RequestSyncPacket, ctx: MessageContext): IMessage? {
+        QReportServer.ticketManager.handleSyncRequest(ctx.serverHandler.playerEntity)
+        return null
     }
 }

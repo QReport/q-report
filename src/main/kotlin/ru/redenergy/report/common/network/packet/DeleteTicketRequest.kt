@@ -1,28 +1,25 @@
 package ru.redenergy.report.common.network.packet
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage
+import cpw.mods.fml.common.network.simpleimpl.MessageContext
 import io.netty.buffer.ByteBuf
-import io.netty.channel.ChannelHandlerContext
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.entity.player.EntityPlayerMP
-import ru.redenergy.report.common.network.AbstractPacket
+import ru.redenergy.report.common.network.Message
 import ru.redenergy.report.server.QReportServer
 
-class DeleteTicketRequest(var id: Int): AbstractPacket {
+class DeleteTicketRequest(var id: Int): Message<DeleteTicketRequest> {
 
-    override fun encodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
+    constructor(): this(-1)
+
+    override fun toBytes(buf: ByteBuf) {
         buf.writeInt(id)
     }
 
-
-    override fun decodeInto(ctx: ChannelHandlerContext, buf: ByteBuf) {
+    override fun fromBytes(buf: ByteBuf) {
         id = buf.readInt()
     }
 
-    override fun handleClient(player: EntityPlayer) {
-        throw UnsupportedOperationException()
-    }
-
-    override fun handleServer(player: EntityPlayer) {
-        QReportServer.ticketManager.handleDeleteTicker(id, player as EntityPlayerMP)
+    override fun onMessage(message: DeleteTicketRequest, ctx: MessageContext): IMessage? {
+        QReportServer.ticketManager.handleDeleteTicker(message.id, ctx.serverHandler.playerEntity)
+        return null
     }
 }

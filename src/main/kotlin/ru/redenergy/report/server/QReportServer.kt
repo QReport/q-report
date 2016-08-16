@@ -41,7 +41,6 @@ object QReportServer {
             else                  JdbcConnectionSource(jdbcPath, jdbcLogin, jdbcPassword)
 
         ticketManager = ReportManager(connectionSource)
-        NetworkHandler.initialise()
     }
 
     /**
@@ -66,7 +65,6 @@ object QReportServer {
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent){
         println("Serverside QReport Loaded")
-        NetworkHandler.postInitialize()
         ticketManager.initialize()
     }
 }

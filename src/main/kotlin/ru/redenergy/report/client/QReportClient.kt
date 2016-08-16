@@ -32,14 +32,12 @@ object QReportClient {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
-        NetworkHandler.initialise()
         NetworkHandler.registerDefaultPackets()
     }
 
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
         registerKeys()
-        NetworkHandler.postInitialize()
         MinecraftForge.EVENT_BUS.register(UIOpenHandler())
         println("QReport Loaded")
     }
