@@ -119,18 +119,15 @@ class ReportManager(val connectionSource: ConnectionSource) {
     /**
      * Checks if player have permission to answer/close other players tickets
      */
-    private fun canAccessTicketManagement(player: EntityPlayerMP): Boolean {
-        if(MinecraftServer.getServer().isDedicatedServer){
-            if(QReportServer.checkPermission){
-                return ForgeVault.getPermission()?.has(null as String?, player.commandSenderName, QReportServer.permissionNode) ?: false
-            } else {
-                return isOp(player)
-            }
-        } else {
-            return player.capabilities.isCreativeMode
-        }
+    fun canAccessTicketManagement(player: EntityPlayerMP): Boolean =
+        if(MinecraftServer.getServer().isDedicatedServer)
+            if(QReportServer.checkPermission)
+                ForgeVault.getPermission()?.has(null as String?, player.commandSenderName, QReportServer.permissionNode) ?: false
+             else
+                isOp(player)
 
-    }
+         else
+            player.capabilities.isCreativeMode
 
     /**
      * Returns true if given player has operator permission
@@ -138,21 +135,6 @@ class ReportManager(val connectionSource: ConnectionSource) {
     private fun isOp(player: EntityPlayerMP): Boolean = MinecraftServer.getServer().configurationManager
             .func_152603_m().func_152700_a(player.commandSenderName) != null
 
-    /**
-     * Returns list with names of users who sent messages to given ticket
-     */
-    private fun getParticipants(ticket: Ticket): MutableList<String>{
-        return hashSetOf(*ticket.messages.map { it.sender }.toTypedArray()).toMutableList()
-    }
-
-    /**
-     * Sends message to all players with the names in the list <br>
-     * If any of players is offline he won't receive message
-     */
-    private fun notifyUsers(users: List<String>, message: IChatComponent): Unit =
-        users.map { MinecraftServer.getServer().configurationManager.func_152612_a(it) }
-                .filter { it != null }
-                .forEach { it.addChatMessage(message) }
 
     fun handleUpdateTicketStatus(ticketUid: Int, status: TicketStatus, player: EntityPlayerMP){
         var ticket = ticketDao.queryForId(ticketUid) ?: return
@@ -160,9 +142,9 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticket.status = status
             ticketDao.update(ticket)
             if(QReportServer.notifications) {
-                val notified = getParticipants(ticket).apply { remove(player.commandSenderName) }
-                val message = ChatComponentTranslation("chat.messages.update.status", player.displayName, ticket.shortUid, ticket.status).apply { chatStyle.color = EnumChatFormatting.GOLD }
-                notifyUsers(notified, message)
+                val message = ChatComponentTranslation("chat.messages.update.status", player.displayName, ticket.shortUid, ticket.status)
+                        .apply { chatStyle.color = EnumChatFormatting.GOLD }
+                ticket.getParticipantsOnline().without(player).sendMessage(message)
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
@@ -176,10 +158,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
         if(adminAccess)
             NetworkHandler.sendTo(SyncStatsPackets(gatherStats()), player)
 
-        var tickets = if (adminAccess)
-                          getTickets()
-                      else
-                          getTicketsByPlayer(player.commandSenderName)
+        val tickets = if (adminAccess) getTickets()
+                      else getTicketsByPlayer(player.commandSenderName)
 
         NetworkHandler.sendTo(SyncTickets(tickets), player)
     }
@@ -191,9 +171,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
             ticket.messages.add(ticketMessage)
             ticketDao.update(ticket)
             if(QReportServer.notifications) {
-                val notified = getParticipants(ticket).apply { remove(player.commandSenderName) }
                 val message = ChatComponentTranslation("chat.messages.add.message", player.displayName, ticket.shortUid).apply { chatStyle.color = EnumChatFormatting.GOLD }
-                notifyUsers(notified, message)
+                ticket.getParticipantsOnline().without(player).sendMessage(message)
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
@@ -204,10 +183,10 @@ class ReportManager(val connectionSource: ConnectionSource) {
         if(text.isBlank()) return
         val ticket = newTicket(text, reason, player.commandSenderName)
         if(QReportServer.notifications)
-            notifyUsers((MinecraftServer.getServer().configurationManager.playerEntityList as MutableList<EntityPlayerMP>)
-                    .map {it.commandSenderName}
-                    .filter { ForgeVault.getPermission().has(null as String?, it, QReportServer.permissionNode)},
-                    ChatComponentTranslation("chat.messages.add.ticket", player.commandSenderName, ticket.uid))
+            MinecraftServer.getServer().configurationManager.playerEntityList
+                    .filterIsInstance(EntityPlayerMP::class.java)
+                    .filter { it.isTicketModerator() }
+                    .sendMessage(ChatComponentTranslation("chat.messages.add.ticket", player.commandSenderName, ticket.uid))
 
     }
 
@@ -216,12 +195,33 @@ class ReportManager(val connectionSource: ConnectionSource) {
         if(canAccessTicket(ticket, player)){
             deleteTicket(ticket)
             if(QReportServer.notifications){
-                val notified = getParticipants(ticket).apply { remove(player.commandSenderName) }
                 val message = ChatComponentTranslation("chat.messages.delete.ticket", player.displayName, ticket.shortUid).apply { chatStyle.color = EnumChatFormatting.GOLD }
-                notifyUsers(notified, message)
+                ticket.getParticipantsOnline().without(player).sendMessage(message)
             }
         } else {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
     }
 }
+
+fun EntityPlayerMP.isTicketModerator(): Boolean = QReportServer.ticketManager.canAccessTicketManagement(this)
+
+fun Collection<EntityPlayerMP>.sendMessage(message: IChatComponent) = forEach { it.addChatComponentMessage(message) }
+
+fun Ticket.getParticipantsNames(): MutableCollection<String> = this.messages.map { it.sender }.distinct().toMutableList()
+
+fun Ticket.getParticipantsOnline(): MutableCollection<EntityPlayerMP> =
+        this.messages
+                .map { it.sender }
+                .map { MinecraftServer.getServer().configurationManager.func_152612_a(it) }
+                .filterNotNull().distinct().toMutableList()
+
+/**
+ * Returns collection which doesn't contain given elements
+ */
+fun <T> MutableCollection<T>.without(vararg elements: T): MutableCollection<T>{
+    this.removeAll(elements)
+    return this
+}
+
+
