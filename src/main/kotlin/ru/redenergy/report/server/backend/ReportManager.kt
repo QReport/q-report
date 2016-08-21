@@ -13,6 +13,7 @@ import net.minecraft.util.ChatComponentText
 import net.minecraft.util.ChatComponentTranslation
 import net.minecraft.util.EnumChatFormatting
 import net.minecraft.util.IChatComponent
+import ru.redenergy.report.common.BlockedPlayer
 import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
@@ -34,11 +35,16 @@ class ReportManager(val connectionSource: ConnectionSource) {
     /**
      * ORM configuration for Ticket.class
      */
-    val ticketConfig = configureTicketEntity()
+    val ticketConfig = ticketDaoConfig()
+
+    val blockedPlayerConfig = blockedPlayerDaoConfig()
+
     /**
      * ORM Dao for Ticket.class
      */
     var ticketDao = DaoManager.createDao<Dao<Ticket, Int>, Ticket>(connectionSource, ticketConfig)
+
+    var blockedPlayersDao = DaoManager.createDao<Dao<BlockedPlayer, String>, BlockedPlayer>(connectionSource, blockedPlayerConfig)
 
     /**
      * Contains tickets from last database query <br>
@@ -47,7 +53,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
     var cachedTickets: MutableList<Ticket> = arrayListOf()
 
     fun initialize() {
-        TableUtils.createTableIfNotExists(connectionSource, Ticket::class.java)
+        TableUtils.createTableIfNotExists(connectionSource, ticketConfig)
+        TableUtils.createTableIfNotExists(connectionSource, blockedPlayerConfig)
     }
 
     /**
@@ -98,8 +105,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
     /**
      * Returns ORM configuration for Ticket.class
      */
-    private fun configureTicketEntity(): DatabaseTableConfig<Ticket> {
-        return DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
+    private fun ticketDaoConfig(): DatabaseTableConfig<Ticket> =
+        DatabaseTableConfig(Ticket::class.java, arrayListOf<DatabaseFieldConfig>().apply {
             add(DatabaseFieldConfig("uid").apply { isGeneratedId = true;})
             add(DatabaseFieldConfig("status"))
             add(DatabaseFieldConfig("sender"))
@@ -107,7 +114,18 @@ class ReportManager(val connectionSource: ConnectionSource) {
             add(DatabaseFieldConfig("reason"))
             add(DatabaseFieldConfig("messages").apply { persisterClass = JsonPersister::class.java })
         }).apply { tableName = "tickets" }
-    }
+
+
+
+    private fun blockedPlayerDaoConfig(): DatabaseTableConfig<BlockedPlayer> =
+        DatabaseTableConfig(BlockedPlayer::class.java, arrayListOf<DatabaseFieldConfig>().apply {
+            add(DatabaseFieldConfig("name").apply { isId = true })
+            add(DatabaseFieldConfig("blocked"))
+            add(DatabaseFieldConfig("blockedBy"))
+            add(DatabaseFieldConfig("blockTime"))
+        }).apply { tableName = "blocked_players" }
+
+
 
     /**
      * Checks if player have permission to answer/close this particular ticket
@@ -128,6 +146,12 @@ class ReportManager(val connectionSource: ConnectionSource) {
 
          else
             player.capabilities.isCreativeMode
+
+    fun canSendTickets(player: EntityPlayerMP): Boolean =
+        blockedPlayersDao.queryForId(player.commandSenderName)?.blocked?.not() ?: true
+
+    fun getBlockStatus(player: EntityPlayerMP): BlockedPlayer? =
+            blockedPlayersDao.queryForId(player.commandSenderName)
 
     /**
      * Returns true if given player has operator permission
@@ -181,6 +205,11 @@ class ReportManager(val connectionSource: ConnectionSource) {
 
     fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) {
         if(text.isBlank()) return
+        val blockStatus = player.getBlockStatus()
+        if(blockStatus != null && blockStatus.blocked){
+            player.addChatComponentMessage(ChatComponentText("You were blocked by ${blockStatus.blockedBy} and unable to send new tickets"))
+            return
+        }
         val ticket = newTicket(text, reason, player.commandSenderName)
         if(QReportServer.notifications)
             MinecraftServer.getServer().configurationManager.playerEntityList
@@ -215,6 +244,10 @@ fun Ticket.getParticipantsOnline(): MutableCollection<EntityPlayerMP> =
                 .map { it.sender }
                 .map { MinecraftServer.getServer().configurationManager.func_152612_a(it) }
                 .filterNotNull().distinct().toMutableList()
+
+fun EntityPlayerMP.canSendTickets(): Boolean = QReportServer.ticketManager.canSendTickets(this)
+
+fun EntityPlayerMP.getBlockStatus(): BlockedPlayer? = QReportServer.ticketManager.getBlockStatus(this)
 
 /**
  * Returns collection which doesn't contain given elements
