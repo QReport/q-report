@@ -9,9 +9,9 @@ import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.network.Message
 
-class SyncStatsPackets(var stats: Stats): Message<SyncStatsPackets> {
+class SyncStatsPackets(var stats: Stats?): Message<SyncStatsPackets> {
 
-    constructor(): this(QReportClient.syncedStats) //it doesn't serves any purpose just dummy data for packet creation
+    constructor(): this(null)
 
     override fun toBytes(buf: ByteBuf) {
         ByteBufUtils.writeUTF8String(buf, Gson().toJson(stats))
@@ -23,7 +23,8 @@ class SyncStatsPackets(var stats: Stats): Message<SyncStatsPackets> {
     }
 
     override fun onMessage(message: SyncStatsPackets, ctx: MessageContext): IMessage? {
-        QReportClient.syncedStats = message.stats
+        if(message.stats != null)
+            QReportClient.syncedStats = message.stats!!
         return null
     }
 
