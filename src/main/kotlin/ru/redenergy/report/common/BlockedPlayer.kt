@@ -5,6 +5,6 @@ package ru.redenergy.report.common
  */
 class BlockedPlayer(var name: String, var blocked: Boolean, var blockedBy: String, var blockTime: Long) {
 
-    constructor(): this("", false, "")
+    constructor(): this("", false, "", -1)
 }
 

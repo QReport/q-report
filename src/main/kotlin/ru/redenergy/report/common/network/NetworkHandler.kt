@@ -6,6 +6,11 @@ import cpw.mods.fml.relauncher.Side
 import cpw.mods.fml.relauncher.Side.*
 import net.minecraft.entity.player.EntityPlayerMP
 import ru.redenergy.report.common.network.packet.*
+import ru.redenergy.report.common.network.packet.requests.RequestBlockedPlayers
+import ru.redenergy.report.common.network.packet.requests.RequestSyncPacket
+import ru.redenergy.report.common.network.packet.sync.SyncBlockedPlayers
+import ru.redenergy.report.common.network.packet.sync.SyncStatsPackets
+import ru.redenergy.report.common.network.packet.sync.SyncTickets
 import kotlin.reflect.KClass
 
 object  NetworkHandler {
@@ -23,7 +28,10 @@ object  NetworkHandler {
         registerPacket(UpdateAdminAccess::class, CLIENT)
         registerPacket(ChangeTicketStatus::class, SERVER)
         registerPacket(SyncStatsPackets::class, CLIENT)
-        registerPacket(DeleteTicketRequest::class, SERVER)
+        registerPacket(DeleteTicketPacket::class, SERVER)
+        registerPacket(RequestBlockedPlayers::class, SERVER)
+        registerPacket(SyncBlockedPlayers::class, CLIENT)
+        registerPacket(ChangePlayerStatus::class, SERVER)
         packetsRegistered = true
     }
 

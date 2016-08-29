@@ -1,5 +1,6 @@
 package ru.redenergy.report.server.backend
 
+import com.google.common.collect.Iterables
 import com.j256.ormlite.dao.Dao
 import com.j256.ormlite.dao.DaoManager
 import com.j256.ormlite.field.DataPersisterManager
@@ -19,9 +20,10 @@ import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.entity.*
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.SyncStatsPackets
-import ru.redenergy.report.common.network.packet.SyncTickets
+import ru.redenergy.report.common.network.packet.sync.SyncStatsPackets
+import ru.redenergy.report.common.network.packet.sync.SyncTickets
 import ru.redenergy.report.common.network.packet.UpdateAdminAccess
+import ru.redenergy.report.common.network.packet.sync.SyncBlockedPlayers
 import ru.redenergy.report.server.QReportServer
 import ru.redenergy.report.server.orm.JsonPersister
 import ru.redenergy.vault.ForgeVault
@@ -206,8 +208,8 @@ class ReportManager(val connectionSource: ConnectionSource) {
     fun handleNewTicket(text: String, reason: TicketReason, player: EntityPlayerMP) {
         if(text.isBlank()) return
         val blockStatus = player.getBlockStatus()
-        if(blockStatus != null && blockStatus.blocked){
-            player.addChatComponentMessage(ChatComponentText("You were blocked by ${blockStatus.blockedBy} and unable to send new tickets"))
+        if(blockStatus?.blocked ?: false){
+            player.addChatComponentMessage(ChatComponentText("You were blocked by ${blockStatus?.blockedBy ?: "admin"} and unable to send new tickets"))
             return
         }
         val ticket = newTicket(text, reason, player.commandSenderName)
@@ -231,6 +233,58 @@ class ReportManager(val connectionSource: ConnectionSource) {
             player.addChatMessage(ChatComponentText("${EnumChatFormatting.RED}Ooops, you don't have access to ticket with id ${ticket.shortUid}."))
         }
     }
+
+    fun syncBlockedPlayersWith(player: EntityPlayerMP){
+        val blockedPlayers = arrayListOf<BlockedPlayer>()
+        if(player.isTicketModerator())
+            blockedPlayers.addAll(blockedPlayersDao.queryBuilder().where().eq("blocked", true).query())
+        else
+            blockedPlayersDao.queryForId(player.commandSenderName)?.run { blockedPlayers.add(this) }
+        NetworkHandler.sendTo(SyncBlockedPlayers(blockedPlayers), player)
+    }
+
+    fun  handleUnblockPlayer(requestedPlayer: String, playerEntity: EntityPlayerMP) {
+        if(!playerEntity.isTicketModerator()){
+            playerEntity.addChatComponentMessage(ChatComponentText("${EnumChatFormatting.RED}You don't have permission to do this"))
+            return
+        }
+
+        val blockedPlayer = blockedPlayersDao.queryForId(requestedPlayer)
+        if(!(blockedPlayer?.blocked ?: false)){
+            playerEntity.addChatMessage(ChatComponentText("${EnumChatFormatting.YELLOW}$requestedPlayer is not blocked."))
+            return
+        }
+
+        blockedPlayer.blocked = false
+        blockedPlayersDao.update(blockedPlayer)
+        playerEntity.addChatMessage(ChatComponentText("${EnumChatFormatting.GREEN}$requestedPlayer has been successfully unblocked"))
+        requestedPlayer.findOnlinePlayer()?.addChatComponentMessage(ChatComponentText("${EnumChatFormatting.YELLOW}You're now able to send tickets"))
+        NetworkHandler.sendTo(SyncBlockedPlayers(blockedPlayersDao.queryBuilder().where().eq("blocked", true).query()), playerEntity)
+    }
+
+    fun  handleBlockPlayer(target: String, sender: EntityPlayerMP) {
+        if(!sender.isTicketModerator()){
+            sender.addChatComponentMessage(ChatComponentText("${EnumChatFormatting.RED}You don't have permission to do this"))
+            return
+        }
+        var blockedTarget = blockedPlayersDao.queryForId(target)
+        if(blockedTarget?.blocked ?: false){
+            sender.addChatMessage(ChatComponentText("${EnumChatFormatting.YELLOW}$target already blocked."))
+            return
+        }
+
+        if(blockedTarget != null){
+            blockedTarget.blocked = true
+            blockedTarget.blockedBy = sender.commandSenderName
+            blockedTarget.blockTime = System.currentTimeMillis()
+        } else {
+            blockedTarget = BlockedPlayer(target, true, sender.commandSenderName, System.currentTimeMillis())
+        }
+        blockedPlayersDao.createOrUpdate(blockedTarget)
+        sender.addChatMessage(ChatComponentText("${EnumChatFormatting.GREEN}$target has been successfully blocked"))
+        target.findOnlinePlayer()?.addChatMessage(ChatComponentText("${EnumChatFormatting.YELLOW}You're no longer able to send tickets"))
+        NetworkHandler.sendTo(SyncBlockedPlayers(blockedPlayersDao.queryBuilder().where().eq("blocked", true).query()), sender)
+    }
 }
 
 fun EntityPlayerMP.isTicketModerator(): Boolean = QReportServer.ticketManager.canAccessTicketManagement(this)
@@ -242,8 +296,11 @@ fun Ticket.getParticipantsNames(): MutableCollection<String> = this.messages.map
 fun Ticket.getParticipantsOnline(): MutableCollection<EntityPlayerMP> =
         this.messages
                 .map { it.sender }
-                .map { MinecraftServer.getServer().configurationManager.func_152612_a(it) }
-                .filterNotNull().distinct().toMutableList()
+                .mapNotNull { it.findOnlinePlayer() }
+                .distinct().toMutableList()
+
+fun String.findOnlinePlayer(): EntityPlayerMP? =
+    MinecraftServer.getServer().configurationManager.func_152612_a(this)
 
 fun EntityPlayerMP.canSendTickets(): Boolean = QReportServer.ticketManager.canSendTickets(this)
 
