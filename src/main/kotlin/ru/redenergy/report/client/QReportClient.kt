@@ -9,6 +9,7 @@ import org.lwjgl.input.Keyboard
 import ru.redenergy.report.client.handler.UIOpenHandler
 import ru.redenergy.report.client.keyboard.KeyboardController
 import ru.redenergy.report.client.ui.SupportShow
+import ru.redenergy.report.common.BlockedPlayer
 import ru.redenergy.report.common.Stats
 import ru.redenergy.report.common.TicketReason
 import ru.redenergy.report.common.entity.Ticket
@@ -20,7 +21,7 @@ object QReportClient {
     /**
      * Contains tickets which have been received from server
      */
-    var syncedTickets: MutableList<Ticket> = arrayListOf()
+    var syncedTickets = arrayListOf<Ticket>()
     /**
      * Contains statistics which have been received from server
      */
@@ -29,6 +30,12 @@ object QReportClient {
      * Shows if current player can manage user requests, if set to true 'admin' button will be available
      */
     var adminAccess = false
+    /**
+     * Information about blocked players received from server.
+     * If client player is blocked this list will contain object with his name.
+     * If client player is admin this list will contain all blocked players.
+     */
+    var syncedBlockedPlayers = arrayListOf<BlockedPlayer>()
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {

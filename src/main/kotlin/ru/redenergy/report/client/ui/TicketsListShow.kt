@@ -17,7 +17,7 @@ import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.common.entity.Ticket
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.AddMessagePacket
-import ru.redenergy.report.common.network.packet.RequestSyncPacket
+import ru.redenergy.report.common.network.packet.requests.RequestSyncPacket
 import java.text.SimpleDateFormat
 import java.util.*
 

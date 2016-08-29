@@ -9,8 +9,8 @@ import ru.redenergy.report.client.ui.TicketsListShow
 import ru.redenergy.report.common.TicketStatus
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.ChangeTicketStatus
-import ru.redenergy.report.common.network.packet.DeleteTicketRequest
-import ru.redenergy.report.common.network.packet.RequestSyncPacket
+import ru.redenergy.report.common.network.packet.DeleteTicketPacket
+import ru.redenergy.report.common.network.packet.requests.RequestSyncPacket
 
 class ManageTicketsShow: TicketsListShow(){
 

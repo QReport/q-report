@@ -7,8 +7,8 @@ import com.rabbit.gui.render.TextAlignment
 import com.rabbit.gui.show.Show
 import net.minecraft.client.resources.I18n
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.DeleteTicketRequest
-import ru.redenergy.report.common.network.packet.RequestSyncPacket
+import ru.redenergy.report.common.network.packet.DeleteTicketPacket
+import ru.redenergy.report.common.network.packet.requests.RequestSyncPacket
 
 class DeleteConfirmShow(val ticket: Int): Show() {
 
@@ -28,7 +28,7 @@ class DeleteConfirmShow(val ticket: Int): Show() {
     }
 
     fun delete(){
-        NetworkHandler.sendToServer(DeleteTicketRequest(ticket))
+        NetworkHandler.sendToServer(DeleteTicketPacket(ticket))
         NetworkHandler.sendToServer(RequestSyncPacket())
         getStage().displayPrevious();
     }

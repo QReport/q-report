@@ -7,7 +7,7 @@ import com.rabbit.gui.render.TextAlignment
 import com.rabbit.gui.show.Show
 import net.minecraft.client.resources.I18n
 import ru.redenergy.report.common.network.NetworkHandler
-import ru.redenergy.report.common.network.packet.RequestSyncPacket
+import ru.redenergy.report.common.network.packet.requests.RequestSyncPacket
 
 class AdminCenter: Show() {
 
