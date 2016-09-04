@@ -11,7 +11,7 @@ import ru.redenergy.report.client.QReportClient
 import ru.redenergy.report.common.network.NetworkHandler
 import ru.redenergy.report.common.network.packet.ChangePlayerStatus
 
-class BlockPlayerShow: Show(){
+class BlockPlayerShow(val preFilledName: String = ""): Show(){
 
     init {
         background = DefaultBackground()
@@ -20,7 +20,7 @@ class BlockPlayerShow: Show(){
     override fun setup() {
         super.setup()
         registerComponent(TextLabel(this.width / 2 - 100, this.height / 2 - 70, 200, 10, "Block Player", TextAlignment.CENTER))
-        registerComponent(TextBox(this.width / 2 - 100, this.height / 2 - 30, 200, 20)
+        registerComponent(TextBox(this.width / 2 - 100, this.height / 2 - 30, 200, 20, preFilledName)
                     .setId("player_name"))
         registerComponent(TextLabel(this.width / 2 - 100, this.height / 2 - 5, 200, 20, "", TextAlignment.CENTER)
                     .setId("warning")

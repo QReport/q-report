@@ -52,16 +52,6 @@ class StatisticsShow: Show() {
             registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 6 - this.height / 20 * i, colorShapeWidth, colorShapeHeight, ShapeType.RECT, color))
         }
 
-//        registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 25, colorShapeWidth, colorShapeHeight, ShapeType.RECT, Color.BLUE))
-//        registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 12, colorShapeWidth, colorShapeHeight, ShapeType.RECT, Color.RED))
-//        registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 8, colorShapeWidth, colorShapeHeight, ShapeType.RECT, Color.ORANGE))
-//        registerComponent(Shape(colorLabelsX, colorLabelsY + this.height / 6, colorShapeWidth, colorShapeHeight, ShapeType.RECT, Color.MAGENTA))
-//
-//        registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 25, 200, 20, " - " + colorTitles[0]))
-//        registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 12, 200, 20, " - " + colorTitles[1]))
-//        registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 8, 200, 20, " - " + colorTitles[2]))
-//        registerComponent(TextLabel(colorLabelsX + colorShapeWidth, colorLabelsY + this.height / 6, 200, 20, " - " + colorTitles[3]))
-
         registerComponent(Button(this.width / 3, this.height / 10 * 9, this.width / 3, 20, I18n.format("show.stats.back"))
                             .setClickListener { this.getStage().displayPrevious() })
 
