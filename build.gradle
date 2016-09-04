@@ -1,6 +1,7 @@
 import net.minecraftforge.gradle.tasks.user.reobf.ArtifactSpec
 
 buildscript {
+    ext.kotlin_version = '1.0.0'
     repositories {
         mavenCentral()
         maven {
@@ -14,7 +15,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -33,6 +34,7 @@ repositories{
         name = "bukkit"
         url = "http://repo.bukkit.org/content/groups/public/"
     }
+    mavenCentral()
 }
 
 version = "v1.2.3"
@@ -60,19 +62,24 @@ configurations {
 }
 
 configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' //update dependencies on every build
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'seconds' //update dependencies on every build
+        //failOnVersionConflict() //uncomment if you feel like something wrong with dependencies :D
+    }
 }
 
 dependencies {
-    commonShade 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0'
-    commonShade 'org.jetbrains.kotlin:kotlin-runtime:1.0.0'
+    commonShade "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    commonShade "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
     common ('com.github.QReport:Forgelin:1.0.0+1.7.10'){
             transitive = false
     }
 
     commonShade 'com.github.QReport:q-report-common:v1.2.0'
 
-    client 'com.github.FRedEnergy:rabbit-gui:-SNAPSHOT:shaded'
+    client('com.github.FRedEnergy.rabbit-gui:rabbit-gui:4014a75508:shaded'){
+        transitive = false
+    }
 
     server 'com.github.FRedEnergy:forge-vault:c2d5527281'
     server 'com.j256.ormlite:ormlite-core:4.48'
@@ -166,9 +173,8 @@ artifacts{
 }
 
 sourceSets {
-    main {
-        output.resourcesDir = output.classesDir
-    }
+    main.output.resourcesDir = sourceSets.main.output.classesDir
+    main.java.srcDirs += 'src/main/kotlin'
 }
 
 processResources {
