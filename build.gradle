@@ -37,7 +37,7 @@ repositories{
     mavenCentral()
 }
 
-version = "v1.2.3"
+version = "v1.3.0"
 group= "ru.redenergy.report"
 archivesBaseName = "qreport"
 
