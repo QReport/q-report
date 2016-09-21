@@ -104,9 +104,6 @@ class BlockedListShow(): Show() {
         }
 
         override fun onDraw(list: DisplayList?, posX: Int, posY: Int, width: Int, height: Int, mouseX: Int, mouseY: Int) {
-            Renderer.drawRect(posX, posY, posX + width, posY + height, -6250336)
-            Renderer.drawRect(posX + 1, posY + 1, posX + width - 1, posY + height - 1, -0xFFFFFF - 1)
-            
             button.x = posX + width - 90
             button.y = posY + height / 2 - 10
             button.onDraw(mouseX, mouseY, 0F)
